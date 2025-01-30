@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
-        style="?textAppearanceHeadlineSmall"
         android:id="@+id/text_view_app_name"
+        style="?textAppearanceHeadlineSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -20,15 +20,15 @@
         android:id="@+id/text_field_event_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
         android:hint="@string/event_name"
-        app:startIconDrawable="@drawable/baseline_festival_24"
         app:endIconMode="clear_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_view_app_name">
+        app:layout_constraintTop_toBottomOf="@id/text_view_app_name"
+        app:startIconDrawable="@drawable/baseline_festival_24">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_text_event_name"
@@ -42,15 +42,15 @@
         android:id="@+id/text_field_event_location"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:hint="@string/event_location"
-        app:startIconDrawable="@drawable/baseline_add_location_alt_24"
         app:endIconMode="clear_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_field_event_name">
+        app:layout_constraintTop_toBottomOf="@id/text_field_event_name"
+        app:startIconDrawable="@drawable/baseline_add_location_alt_24">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_text_event_location"
@@ -60,6 +60,101 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- DatePicker -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_field_event_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/event_location"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_field_event_location"
+        app:startIconDrawable="@drawable/sharp_calendar_month_24">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_text_event_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Event type selector -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_field_event_type"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/event_type"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_field_event_date"
+        app:startIconDrawable="@drawable/baseline_celebration_24">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_text_event_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textAutoComplete" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Event description -->
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_field_event_description"
+        android:layout_width="0dp"
+        android:layout_height="80pt"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/event_description"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_field_event_type">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_text_event_description"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="top|start"
+            android:minHeight="100dp"
+            android:inputType="textMultiLine"
+            android:lines="3"
+            android:maxLines="6"
+            android:scrollbars="vertical"
+            android:overScrollMode="always"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- New event button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_create_event"
+        android:layout_width="70dp"
+        android:layout_height="75dp"
+        android:layout_margin="10dp"
+        app:strokeColor="@color/black"
+        app:backgroundTint="@color/lightGrey"
+        android:shadowColor="@color/black"
+        app:iconSize="12pt"
+        app:cornerRadius="20dp"
+        app:icon="@drawable/baseline_add_24"
+        app:iconTint="@color/black"
+        app:iconGravity="textTop"
+        app:iconPadding="0pt"
+        android:elevation="2dp"
+        android:translationZ="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
     <!-- Implement the other UI components here. -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
