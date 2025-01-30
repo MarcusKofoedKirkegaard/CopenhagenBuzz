@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.ActivityMainBinding
+import java.sql.Date
+import java.time.LocalDate
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,9 +29,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addEventButton: FloatingActionButton
 
 
-    // TODO : Implement the missing GUI variables
-    // An instance of the `Event ` class .
     private val event: Event = Event(
+        "",
+        "",
+        LocalDate.now(),
         "",
         ""
     )
@@ -54,10 +57,12 @@ class MainActivity : AppCompatActivity() {
         // Listener for user interaction in the `Add Event ` button .
         addEventButton.setOnClickListener {
 
-            // Only execute the following code when the user fills all
-            // `EditText `.
+            // Only execute the following code when the user fills all `EditText `.
             if (eventName.text.toString().isNotEmpty() &&
-                eventLocation.text.toString().isNotEmpty()
+                eventLocation.text.toString().isNotEmpty() &&
+                eventDate.text.toString().isNotEmpty() &&
+                eventType.text.toString().isNotEmpty() &&
+                eventDescription.text.toString().isNotEmpty()
             ) {
                 // Update the object attributes .
                 event.setEventName(
@@ -66,8 +71,15 @@ class MainActivity : AppCompatActivity() {
                 event.setEventLocation(
                     eventLocation.text.toString().trim()
                 )
-
-                // TODO : Implement the missing code here .
+                event.setEventDate(
+                    LocalDate.parse(eventDate.text)
+                )
+                event.setEventType(
+                    eventType.text.toString().trim()
+                )
+                event.setEventDescription(
+                    eventDescription.text.toString().trim()
+                )
                 // Write in the `Logcat ` system .
                 showMessage()
             }

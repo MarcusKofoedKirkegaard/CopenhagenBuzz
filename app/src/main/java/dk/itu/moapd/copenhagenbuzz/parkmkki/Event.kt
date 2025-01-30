@@ -1,16 +1,16 @@
 package dk.itu.moapd.copenhagenbuzz.parkmkki
 
-import java.util.Date
+import java.time.LocalDate
 
 class Event {
     private var eventName: String
     private var eventLocation: String
-    private var eventDate: Date // Maybe just string?
+    private var eventDate: LocalDate // Maybe just string?
     private var eventType: String // Probably should be an ENUM?
     private var eventDescription: String
 
 
-    constructor(eventName: String, eventLocation: String, eventDate: Date, eventType: String, eventDescription: String) {
+    constructor(eventName: String, eventLocation: String, eventDate: LocalDate, eventType: String, eventDescription: String) {
         this.eventName = eventName
         this.eventLocation = eventLocation
         this.eventDate = eventDate
@@ -35,11 +35,11 @@ class Event {
         this.eventLocation = eventLocation
     }
 
-    fun getEventDate(): Date {
+    fun getEventDate(): LocalDate {
         return eventDate
     }
 
-    fun setEventDate(eventDate: Date) {
+    fun setEventDate(eventDate: LocalDate) {
         this.eventDate = eventDate
     }
 
