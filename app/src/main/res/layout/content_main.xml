@@ -137,24 +137,23 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- New event button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_create_event"
-        android:layout_width="70dp"
-        android:layout_height="75dp"
-        android:layout_margin="10dp"
-        app:strokeColor="@color/black"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:elevation="8dp"
+        android:translationZ="8dp"
         app:backgroundTint="@color/lightGrey"
-        android:shadowColor="@color/black"
-        app:iconSize="12pt"
-        app:cornerRadius="20dp"
-        app:icon="@drawable/baseline_add_24"
-        app:iconTint="@color/black"
-        app:iconGravity="textTop"
-        app:iconPadding="0pt"
-        android:elevation="2dp"
-        android:translationZ="10dp"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/baseline_add_24"
+        app:tint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-    <!-- Implement the other UI components here. -->
+        app:layout_constraintEnd_toEndOf="parent"
+        app:fabCustomSize="60dp"/>
+
+
+
+        <!-- Implement the other UI components here. -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
