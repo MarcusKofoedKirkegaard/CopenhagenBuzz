@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">CopenhagenBuzz</string>
+    <string name="copenhagenbuzz">CopenhagenBuzz</string>
+    <string name="event_name">Event name</string>
+    <string name="event_location">Event location</string>
 </resources>
