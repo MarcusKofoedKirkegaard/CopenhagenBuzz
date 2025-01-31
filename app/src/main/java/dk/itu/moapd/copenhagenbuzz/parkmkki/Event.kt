@@ -10,7 +10,13 @@ class Event {
     private var eventDescription: String
 
 
-    constructor(eventName: String, eventLocation: String, eventDate: LocalDate, eventType: String, eventDescription: String) {
+    constructor(
+        eventName: String,
+        eventLocation: String,
+        eventDate: LocalDate,
+        eventType: String,
+        eventDescription: String
+    ) {
         this.eventName = eventName
         this.eventLocation = eventLocation
         this.eventDate = eventDate
@@ -60,6 +66,10 @@ class Event {
     }
 
     override fun toString(): String {
-        return " Event ( eventName =' $eventName ', eventLocation =' $eventLocation ')"
+        return " Event ( eventName =' $eventName ', " +
+                "eventLocation =' $eventLocation ', " +
+                "eventDate =' ${eventDate.toString()} ', " +
+                "eventType =' $eventType ', " +
+                "eventDescription =' $eventDescription ')"
     }
 }
