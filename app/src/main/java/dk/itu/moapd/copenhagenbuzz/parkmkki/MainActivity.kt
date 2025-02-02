@@ -9,6 +9,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.ActivityMainBinding
 import java.sql.Date
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var eventType: EditText
     private lateinit var eventDescription: EditText
     private lateinit var addEventButton: FloatingActionButton
+    private lateinit var dateFormat: DateTimeFormatter
 
 
     private val event: Event = Event(
@@ -53,10 +55,9 @@ class MainActivity : AppCompatActivity() {
         eventType = findViewById(R.id.edit_text_event_type)
         eventDescription = findViewById(R.id.edit_text_event_description)
         addEventButton = findViewById(R.id.fab_add_event)
-
+        dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         // Listener for user interaction in the `Add Event ` button .
         addEventButton.setOnClickListener {
-
             // Only execute the following code when the user fills all `EditText `.
             if (eventName.text.toString().isNotEmpty() &&
                 eventLocation.text.toString().isNotEmpty() &&
@@ -71,9 +72,18 @@ class MainActivity : AppCompatActivity() {
                 event.setEventLocation(
                     eventLocation.text.toString().trim()
                 )
-                event.setEventDate(
-                    LocalDate.parse(eventDate.text)
-                )
+                try {
+                    val dateString = eventDate.text.toString().trim()
+
+                    // Check if the string is empty before parsing
+                    if (dateString.isNotEmpty()) {
+                        event.setEventDate(LocalDate.parse(dateString, dateFormat))
+                    } else {
+                        Log.d(TAG, "Date string is empty!")
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Could not parse the date! Error: ${e.message}")
+                }
                 event.setEventType(
                     eventType.text.toString().trim()
                 )
@@ -86,7 +96,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     private fun showMessage() {
+        // I don't know why this does not print to the console in debug
         Log.d(TAG, event.toString())
     }
 }
