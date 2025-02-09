@@ -1,7 +1,12 @@
-CopenhagenBuzz by Emil Parkel & Marcus Kofoed Kirkegaard
-as a part of the Mobile App Development 2025 course at ITU
+# CopenhagenBuzz 
+## by Emil Parkel & Marcus Kofoed Kirkegaard
+### as a part of the Mobile App Development 2025 course at ITU
 
-License Notice:
+# How to run the app
+- Run "App" not MainActivity, as the structure is MVC and MainActivity depends on other sources
+
+
+# License Notice:
 MIT License
 
 Copyright (c) 2025 Emil Parkel & Marcus Kofoed Kirkegaard
@@ -23,3 +28,5 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
