@@ -2,12 +2,10 @@ package dk.itu.moapd.copenhagenbuzz.parkmkki
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.ActivityMainBinding
-import java.sql.Date
+import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.ContentMainBinding
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -15,21 +13,13 @@ import java.time.format.DateTimeFormatter
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var contentBinding: ContentMainBinding
+    private val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
-    // A set of private constants used in this class .
+    // A set of private constants used in this class.
     companion object {
         private val TAG = MainActivity::class.qualifiedName
     }
-
-    // GUI variables .
-    private lateinit var eventName: EditText
-    private lateinit var eventLocation: EditText
-    private lateinit var eventDate: EditText
-    private lateinit var eventType: EditText
-    private lateinit var eventDescription: EditText
-    private lateinit var addEventButton: FloatingActionButton
-    private lateinit var dateFormat: DateTimeFormatter
-
 
     private val event: Event = Event(
         "",
@@ -43,37 +33,27 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        contentBinding = ContentMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        // IMPORTANT : This is an awful implementation . I only implemented
-        // // // it like that because the students need to learn more about Kotlin . This implementation is quite similar to a Java code . We will refactor this code in the
-        // next exercise session .
 
-        // Link the UI components with the Kotlin source - code .
-        eventName = findViewById(R.id.edit_text_event_name)
-        eventLocation = findViewById(R.id.edit_text_event_location)
-        eventDate = findViewById(R.id.edit_text_event_date)
-        eventType = findViewById(R.id.edit_text_event_type)
-        eventDescription = findViewById(R.id.edit_text_event_description)
-        addEventButton = findViewById(R.id.fab_add_event)
-        dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         // Listener for user interaction in the `Add Event ` button .
-        addEventButton.setOnClickListener {
+        contentBinding.fabAddEvent.setOnClickListener {
             // Only execute the following code when the user fills all `EditText `.
-            if (eventName.text.toString().isNotEmpty() &&
-                eventLocation.text.toString().isNotEmpty() &&
-                eventDate.text.toString().isNotEmpty() &&
-                eventType.text.toString().isNotEmpty() &&
-                eventDescription.text.toString().isNotEmpty()
+            if (contentBinding.editTextEventName.text.toString().isNotEmpty() &&
+                contentBinding.editTextEventLocation.text.toString().isNotEmpty() &&
+                contentBinding.editTextEventDate.text.toString().isNotEmpty() &&
+                contentBinding.editTextEventType.text.toString().isNotEmpty() &&
+                contentBinding.editTextEventLocation.text.toString().isNotEmpty()
             ) {
-                // Update the object attributes .
+                // Update the object attributes
                 event.setEventName(
-                    eventName.text.toString().trim()
+                    contentBinding.editTextEventName.text.toString().trim()
                 )
                 event.setEventLocation(
-                    eventLocation.text.toString().trim()
+                    contentBinding.editTextEventLocation.text.toString().trim()
                 )
                 try {
-                    val dateString = eventDate.text.toString().trim()
+                    val dateString = contentBinding.editTextEventDate.text.toString().trim()
 
                     // Check if the string is empty before parsing
                     if (dateString.isNotEmpty()) {
@@ -85,17 +65,16 @@ class MainActivity : AppCompatActivity() {
                     Log.e(TAG, "Could not parse the date! Error: ${e.message}")
                 }
                 event.setEventType(
-                    eventType.text.toString().trim()
+                    contentBinding.editTextEventType.text.toString().trim()
                 )
                 event.setEventDescription(
-                    eventDescription.text.toString().trim()
+                    contentBinding.editTextEventLocation.text.toString().trim()
                 )
                 // Write in the `Logcat ` system .
                 showMessage()
             }
         }
     }
-
 
     private fun showMessage() {
         // I don't know why this does not print to the console in debug
