@@ -2,31 +2,27 @@ package dk.itu.moapd.copenhagenbuzz.parkmkki
 
 import java.time.LocalDate
 
-class Event {
-    private var eventName: String
-    private var eventLocation: String
-    private var eventDate: LocalDate // Maybe just string?
-    private var eventType: String // Probably should be an ENUM?
-    private var eventDescription: String
-
-
-    constructor(
-        eventName: String,
-        eventLocation: String,
-        eventDate: LocalDate,
-        eventType: String,
-        eventDescription: String
-    ) {
-        this.eventName = eventName
-        this.eventLocation = eventLocation
-        this.eventDate = eventDate
-        this.eventType = eventType
-        this.eventDescription = eventDescription
-    }
+/**
+ * Event data class
+ *
+ * @param eventName
+ * @param eventLocation
+ * @param eventDate
+ * @param eventType
+ * @param eventDescription
+ *
+ *
+ */
+data class Event(
+    var eventName: String,
+    var eventLocation: String,
+    var eventDate: LocalDate,
+    var eventType: String,
+    var eventDescription: String
+) {
 
     fun getEventName(): String {
         return eventName
-
     }
 
     fun setEventName(eventName: String) {
@@ -50,7 +46,7 @@ class Event {
     }
 
     fun getEventType(): String {
-        return eventType;
+        return eventType
     }
 
     fun setEventType(eventType: String) {
@@ -65,6 +61,11 @@ class Event {
         this.eventDescription = eventDescription
     }
 
+    /**
+     * Prints the Event information
+     *
+     * @return String of Event information
+     */
     override fun toString(): String {
         return " Event ( eventName =' $eventName ', " +
                 "eventLocation =' $eventLocation ', " +
