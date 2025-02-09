@@ -14,6 +14,8 @@ import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.ActivityMainBinding
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.ContentMainBinding
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import com.google.android.material.snackbar.Snackbar
+
 
 /**
  * Main activity for handling the Event creation
@@ -28,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         private val TAG = MainActivity::class.qualifiedName
     }
 
-    private val event: Event = Event(
+    private var event: Event = Event(
         "",
         "",
         LocalDate.now(),
@@ -47,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         contentBinding = ContentMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        contentBinding = binding.contentMain
         // Listener for user interaction in the `Add Event ` button .
         contentBinding.fabAddEvent.setOnClickListener {
             // Only execute the following code when the user fills all `EditText `.
@@ -58,30 +60,23 @@ class MainActivity : AppCompatActivity() {
                 contentBinding.editTextEventLocation.text.toString().isNotEmpty()
             ) {
                 // Update the object attributes
-                event.setEventName(
-                    contentBinding.editTextEventName.text.toString().trim()
-                )
-                event.setEventLocation(
-                    contentBinding.editTextEventLocation.text.toString().trim()
-                )
+                event.eventName = contentBinding.editTextEventName.text.toString().trim()
+                event.eventLocation = contentBinding.editTextEventLocation.text.toString().trim()
                 try {
                     val dateString = contentBinding.editTextEventDate.text.toString().trim()
 
                     // Check if the string is empty before parsing
                     if (dateString.isNotEmpty()) {
-                        event.setEventDate(LocalDate.parse(dateString, dateFormat))
+                        event.eventDate = LocalDate.parse(dateString, dateFormat)
                     } else {
                         Log.d(TAG, "Date string is empty!")
                     }
                 } catch (e: Exception) {
                     Log.e(TAG, "Could not parse the date! Error: ${e.message}")
                 }
-                event.setEventType(
-                    contentBinding.editTextEventType.text.toString().trim()
-                )
-                event.setEventDescription(
-                    contentBinding.editTextEventLocation.text.toString().trim()
-                )
+                event.eventType = contentBinding.editTextEventType.text.toString().trim()
+                event.eventDescription = contentBinding.editTextEventLocation.text.toString().trim()
+
                 // Write in the `Logcat ` system .
                 showMessage()
             }
@@ -92,6 +87,8 @@ class MainActivity : AppCompatActivity() {
      * Prints out the created Event to LogCat
      */
     private fun showMessage() {
+        Snackbar.make(contentBinding.root, "Event added using ${event.toString()}", Snackbar.LENGTH_LONG).show()
+
         Log.d(TAG, event.toString())
     }
 }
