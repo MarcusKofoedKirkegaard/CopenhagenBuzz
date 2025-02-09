@@ -1,3 +1,9 @@
+/*
+ * (License Notice)
+ * MIT License
+ * Copyright (c) [2025] [Emil Parkel & Marcus Kofoed Kirkegaard]
+ * See README for more
+ */
 package dk.itu.moapd.copenhagenbuzz.parkmkki
 
 import android.os.Bundle
@@ -9,9 +15,10 @@ import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.ContentMainBinding
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-
+/**
+ * Main activity for handling the Event creation
+ */
 class MainActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityMainBinding
     private lateinit var contentBinding: ContentMainBinding
     private val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
@@ -29,6 +36,11 @@ class MainActivity : AppCompatActivity() {
         ""
     )
 
+    /**
+     * Creates the MainActivity window, binds the UI Components & and adds a onClickListener
+     *
+     * @param savedInstanceState
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
@@ -76,8 +88,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Prints out the created Event to LogCat
+     */
     private fun showMessage() {
-        // I don't know why this does not print to the console in debug
         Log.d(TAG, event.toString())
     }
 }
