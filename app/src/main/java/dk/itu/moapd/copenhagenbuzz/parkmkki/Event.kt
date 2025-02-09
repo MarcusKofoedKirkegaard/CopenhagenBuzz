@@ -11,7 +11,7 @@ import java.time.LocalDate
  * @param eventType
  * @param eventDescription
  *
- *
+ *@see "https://kotlinlang.org/docs/data-classes.html#properties-declared-in-the-class-body"
  */
 data class Event(
     var eventName: String,
