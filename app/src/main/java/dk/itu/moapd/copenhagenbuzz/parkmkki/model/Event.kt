@@ -36,7 +36,7 @@ data class Event(
     override fun toString(): String {
         return " Event ( eventName =' $eventName ', " +
                 "eventLocation =' $eventLocation ', " +
-                "eventDate =' ${eventDate.toString()} ', " +
+                "eventDate =' $eventDate ', " +
                 "eventType =' $eventType ', " +
                 "eventDescription =' $eventDescription ')"
     }

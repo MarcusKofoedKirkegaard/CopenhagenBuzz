@@ -6,10 +6,12 @@
  */
 package dk.itu.moapd.copenhagenbuzz.parkmkki.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import androidx.core.view.isVisible
 import dk.itu.moapd.copenhagenbuzz.parkmkki.controller.EventController
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.ActivityMainBinding
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.ContentMainBinding
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         private val TAG = MainActivity::class.qualifiedName
     }
 
+
     /**
      * Creates the MainActivity window, binds the UI Components & and adds a onClickListener
      *
@@ -44,7 +47,13 @@ class MainActivity : AppCompatActivity() {
         contentBinding = ContentMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         contentBinding = binding.contentMain
-        // Listener for user interaction in the `Add Event ` button .
+        // Listener for user interaction in the `Add Event ` button.
+
+        val isLoggedIn = intent.getBooleanExtra("isLoggedIn", true)
+
+        contentBinding.login.isVisible = !isLoggedIn
+        contentBinding.logout.isVisible = isLoggedIn
+
         contentBinding.fabAddEvent.setOnClickListener {
             // Only execute the following code when the user fills all `EditText `.
             if (contentBinding.editTextEventName.text.toString().isNotEmpty() &&
@@ -69,6 +78,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        contentBinding.login.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
+        contentBinding.logout.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     /**
@@ -76,7 +95,7 @@ class MainActivity : AppCompatActivity() {
      */
     private fun showMessage() {
         val event = eventController.getEvent()
-        Snackbar.make(contentBinding.root, "Event added using ${event.toString()}", Snackbar.LENGTH_LONG).show()
+        Snackbar.make(contentBinding.root, "Event added using $event.toString()}", Snackbar.LENGTH_LONG).show()
 
         Log.d(TAG, event.toString())
     }
