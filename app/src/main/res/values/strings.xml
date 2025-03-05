@@ -13,4 +13,9 @@
     <string name="logout">Logout</string>
     <string name="logout_button">Logout Button</string>
     <string name="login_button">Login Button</string>
+    <string name="timeline">Timeline</string>
+    <string name="favorites">Favorites</string>
+    <string name="add_event">Add Event</string>
+    <string name="maps">Maps</string>
+    <string name="calendar">Calendar</string>
 </resources>

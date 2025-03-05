@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_timeline"
+        android:enabled="true"
+        android:icon="@drawable/baseline_calendar_view_day_24"
+        android:title="@string/timeline" />
+    <item
+        android:id="@+id/nav_favorites"
+        android:enabled="true"
+        android:icon="@drawable/outline_bookmark_heart_24"
+        android:title="@string/favorites" />
+    <item
+        android:id="@+id/nav_add_event"
+        android:enabled="true"
+        android:icon="@drawable/baseline_add_24"
+        android:title="@string/add_event"/>
+    <item
+        android:id="@+id/nav_maps"
+        android:enabled="true"
+        android:icon="@drawable/baseline_map_24"
+        android:title="@string/maps" />
+    <item
+        android:id="@+id/nav_calendar"
+        android:enabled="true"
+        android:icon="@drawable/baseline_calendar_today_24"
+        android:title="@string/calendar" />
+</menu>

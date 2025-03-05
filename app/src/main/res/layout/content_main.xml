@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/top_app_bar"
         android:layout_width="412dp"
         android:layout_height="59dp"
@@ -41,18 +41,30 @@
             android:text="@string/logout"
             app:startIconDrawable="@drawable/baseline_festival_24" />
 
-    </Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container"
-        android:name="dk.itu.moapd.copenhagenbuzz.parkmkki.view.AddEventFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_app_bar" />
+        app:layout_constraintTop_toBottomOf="@id/top_app_bar"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph"/>
 
         <!-- Implement the other UI components here. -->
+
+    <!-- Bottom Navigation View -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/bottom_nav_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
