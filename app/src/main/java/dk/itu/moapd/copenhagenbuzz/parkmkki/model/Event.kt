@@ -24,7 +24,8 @@ data class Event(
     var eventLocation: String="",
     var eventDate: LocalDate,
     var eventType: String="",
-    var eventDescription: String=""
+    var eventDescription: String="",
+    var eventImageId: Int
 ) {
 
 

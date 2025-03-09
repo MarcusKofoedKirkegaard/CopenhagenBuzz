@@ -8,7 +8,7 @@ import java.time.LocalDate
  */
 class EventController {
 
-    private val event = Event("", "", LocalDate.now(), "", "")
+    private val event = Event("", "", LocalDate.now(), "", "", 0)
 
     /**
      * Update event
