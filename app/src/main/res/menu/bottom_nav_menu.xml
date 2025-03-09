@@ -8,7 +8,7 @@
     <item
         android:id="@+id/nav_favorites"
         android:enabled="true"
-        android:icon="@drawable/outline_bookmark_heart_24"
+        android:icon="@drawable/baseline_favorite_24"
         android:title="@string/favorites" />
     <item
         android:id="@+id/nav_add_event"
@@ -18,7 +18,7 @@
     <item
         android:id="@+id/nav_maps"
         android:enabled="true"
-        android:icon="@drawable/baseline_map_24"
+        android:icon="@drawable/baseline_location_pin_24"
         android:title="@string/maps" />
     <item
         android:id="@+id/nav_calendar"
