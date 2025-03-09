@@ -18,48 +18,67 @@ import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.ActivityMainBinding
 import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 
 /**
- * Main activity for handling the Event creation
+ * MainActivity serves as the entry point of the application and manages navigation,
+ * authentication status, and UI setup.
  */
 class MainActivity : AppCompatActivity() {
+    /**
+     * View binding for accessing UI elements in `activity_main.xml`.
+     */
     private lateinit var binding: ActivityMainBinding
+
+    /**
+     * Configuration for the navigation bar to manage top-level destinations.
+     */
     private lateinit var appBarConfiguration: AppBarConfiguration
 
+    /**
+     * Called when the activity is created.
+     *
+     * Initializes UI components, sets up navigation, and handles login/logout visibility.
+     *
+     * @param savedInstanceState The saved state of the activity, if any.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
-        //WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+
+        // Inflate the view using ViewBinding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Check if the user is logged in
         val isLoggedIn = intent.getBooleanExtra("isLoggedIn", true)
         binding.contentMain.login.isVisible = !isLoggedIn
         binding.contentMain.logout.isVisible = isLoggedIn
 
+        // Set up login button click listener
         binding.contentMain.login.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
+            navigateToLogin()
         }
 
+        // Set up logout button click listener
         binding.contentMain.logout.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
+            navigateToLogin()
         }
 
+        // Initialize Navigation Component
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
 
+        // Set up the top app bar with navigation controller
         setSupportActionBar(binding.contentMain.topAppBar)
-
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        // Link bottom navigation with the navigation controller
         NavigationUI.setupWithNavController(binding.contentMain.bottomNavigation, navController)
 
+    }
 
-
-        // Listen for changes in selected fragment and update title accordingly
-
-        // Load the fragment into fragment_container
-        /*if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, AddEventFragment())
-                .commit()
-        }*/
+    /**
+     * Navigates the user to the LoginActivity.
+     */
+    private fun navigateToLogin() {
+        startActivity(Intent(this, LoginActivity::class.java))
     }
 }
