@@ -66,13 +66,22 @@
             </LinearLayout>
 
             <ImageButton
-                android:id="@+id/like_button"
+                android:id="@+id/unlike_button"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="centerInside"
                 app:srcCompat="@drawable/baseline_favorite_24"
+                tools:ignore="ContentDescription" />
+            <ImageButton
+                android:id="@+id/like_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/baseline_favorite_border_24"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
             <!-- Media -->

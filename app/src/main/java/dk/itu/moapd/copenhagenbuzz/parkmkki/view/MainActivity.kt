@@ -9,6 +9,7 @@ package dk.itu.moapd.copenhagenbuzz.parkmkki.view
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -72,6 +73,15 @@ class MainActivity : AppCompatActivity() {
 
         // Link bottom navigation with the navigation controller
         NavigationUI.setupWithNavController(binding.contentMain.bottomNavigation, navController)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id in listOf(R.id.nav_timeline, R.id.nav_maps, R.id.nav_calendar, R.id.nav_add_event, R.id.nav_favorites)) {
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                val toolbar = findViewById<Toolbar>(R.id.top_app_bar)
+                toolbar.navigationIcon = null
+            } else {
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            }
+        }
 
     }
 

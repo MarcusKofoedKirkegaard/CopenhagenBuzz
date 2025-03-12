@@ -25,7 +25,8 @@ data class Event(
     var eventDate: LocalDate,
     var eventType: String="",
     var eventDescription: String="",
-    var eventImageId: Int
+    var eventImageId: Int,
+    var isFavorite: Boolean = false
 ) {
 
 

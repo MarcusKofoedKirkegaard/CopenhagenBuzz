@@ -65,7 +65,7 @@ class TimelineFragment : Fragment() {
 
         // Observe LiveData from ViewModel and update RecyclerView adapter when data changes
         viewModel.eventData.observe(viewLifecycleOwner) { events ->
-            val adapter = EventAdapter(events)
+            val adapter = EventAdapter(events, this.viewModel)
             recyclerView.adapter = adapter
         }
     }
