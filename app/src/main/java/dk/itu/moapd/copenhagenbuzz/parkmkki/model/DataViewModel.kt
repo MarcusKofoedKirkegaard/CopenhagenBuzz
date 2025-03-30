@@ -95,6 +95,9 @@ class DataViewModel : ViewModel() {
         )
     }
 
+    /**
+     * Handles fetching of favorites
+     */
     private fun fetchFavoritesFromDatabase(): MutableList<Event> {
         return fetchEventsFromDatabase().filter { it.isFavorite }.toMutableList()
     }
