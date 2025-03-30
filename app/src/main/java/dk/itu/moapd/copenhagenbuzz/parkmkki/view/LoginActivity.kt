@@ -23,13 +23,6 @@ class LoginActivity : AppCompatActivity() {
      */
     private lateinit var binding: ActivityLoginBinding
 
-    companion object {
-        /**
-         * Constant for testing or debugging purposes.
-         */
-        private const val SOMETHING_TEST = "Something_Test"
-    }
-
     /**
      * Called when the activity is first created.
      *
@@ -67,7 +60,6 @@ class LoginActivity : AppCompatActivity() {
      */
     override fun onSaveInstanceState(outState: Bundle) {
         binding.main.apply {
-            //outState.putString(Something_test, toString()) //etc.
         }
         super.onSaveInstanceState(outState)
     }

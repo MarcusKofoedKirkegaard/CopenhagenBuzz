@@ -18,7 +18,7 @@ import dk.itu.moapd.copenhagenbuzz.parkmkki.model.Event
 /**
  * Adapter for displaying a list of events in a RecyclerView.
  *
- * @property eventList The list of [Event] objects to be displayed.
+ * @property favoriteList The list of [Event] objects to be displayed.
  */
 class FavoriteAdapter(private val favoriteList: List<Event>) :
     RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
@@ -31,18 +31,15 @@ class FavoriteAdapter(private val favoriteList: List<Event>) :
     class FavoriteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val eventName: TextView = view.findViewById(R.id.text_field_favorite_name)
         val eventType: TextView = view.findViewById(R.id.text_field_favorite_type)
-        //val eventLocation: TextView = view.findViewById(R.id.text_field_event_location)
-        //val eventDate: TextView = view.findViewById(R.id.text_field_event_date)
-        //val eventDescription: TextView = view.findViewById(R.id.text_field_event_description)
         val eventImage: ImageView = view.findViewById(R.id.favorite_event_image)
     }
 
     /**
-     * Creates a new [EventViewHolder] when needed.
+     * Creates a new [FavoriteViewHolder] when needed.
      *
      * @param parent The parent ViewGroup that holds the item views.
      * @param viewType The view type of the new View.
-     * @return A new instance of [EventViewHolder].
+     * @return A new instance of [FavoriteViewHolder].
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -60,16 +57,13 @@ class FavoriteAdapter(private val favoriteList: List<Event>) :
         val event = favoriteList[position]
         holder.eventName.text = event.eventName
         holder.eventType.text = event.eventType
-        //holder.eventLocation.text = event.eventLocation
-        //holder.eventDate.text = event.eventDate.toString()
-        //holder.eventDescription.text = event.eventDescription
         holder.eventImage.id = event.eventImageId
     }
 
     /**
      * Returns the total number of items in the dataset.
      *
-     * @return The size of [eventList].
+     * @return The size of [favoriteList].
      */
     override fun getItemCount(): Int {
         return favoriteList.size

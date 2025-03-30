@@ -8,13 +8,14 @@ package dk.itu.moapd.copenhagenbuzz.parkmkki.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.google.android.material.appbar.MaterialToolbar
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.ActivityMainBinding
 import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 
@@ -47,42 +48,52 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Check if the user is logged in
-        val isLoggedIn = intent.getBooleanExtra("isLoggedIn", true)
-        binding.contentMain.login.isVisible = !isLoggedIn
-        binding.contentMain.logout.isVisible = isLoggedIn
-
-        // Set up login button click listener
-        binding.contentMain.login.setOnClickListener {
-            navigateToLogin()
-        }
-
-        // Set up logout button click listener
-        binding.contentMain.logout.setOnClickListener {
-            navigateToLogin()
-        }
-
         // Initialize Navigation Component
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
 
         // Set up the top app bar with navigation controller
-        setSupportActionBar(binding.contentMain.topAppBar)
+        setSupportActionBar(binding.topAppBar)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         // Link bottom navigation with the navigation controller
-        NavigationUI.setupWithNavController(binding.contentMain.bottomNavigation, navController)
+        NavigationUI.setupWithNavController(binding.bottomNavigation, navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id in listOf(R.id.nav_timeline, R.id.nav_maps, R.id.nav_calendar, R.id.nav_add_event, R.id.nav_favorites)) {
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
-                val toolbar = findViewById<Toolbar>(R.id.top_app_bar)
+                val toolbar = findViewById<MaterialToolbar>(R.id.top_app_bar)
                 toolbar.navigationIcon = null
             } else {
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
             }
         }
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.top_app_bar, menu)
+        return true
+    }
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val isLoggedIn = intent.getBooleanExtra("isLoggedIn", true)
+        menu.findItem(R.id.login).isVisible = !isLoggedIn
+        menu.findItem(R.id.logout).isVisible = isLoggedIn
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.logout -> {
+                navigateToLogin()
+                true
+            }
+            R.id.login -> {
+                navigateToLogin()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     /**

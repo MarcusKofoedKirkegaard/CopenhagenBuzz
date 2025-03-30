@@ -18,4 +18,10 @@
     <string name="add_event">Add Event</string>
     <string name="maps">Maps</string>
     <string name="calendar">Calendar</string>
+    <string name="edit">Edit</string>
+    <string name="info">Info</string>
+    <string name="temp_content_description">Something about the harbour…</string>
+    <string name="temp_calendar">Calendar!!! :)</string>
+    <string name="temp_maps">MAPS!!!</string>
+    <string name="add_new_event">Add new event</string>
 </resources>

@@ -11,9 +11,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListView
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 import dk.itu.moapd.copenhagenbuzz.parkmkki.controller.EventAdapter
 import dk.itu.moapd.copenhagenbuzz.parkmkki.model.DataViewModel
@@ -58,15 +58,12 @@ class TimelineFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView: RecyclerView = view.findViewById(R.id.timeline_recycler_view)
-
-        // Set LayoutManager for RecyclerView (Linear layout for a list view)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val listView: ListView = view.findViewById(R.id.timeline_list_view)
 
         // Observe LiveData from ViewModel and update RecyclerView adapter when data changes
         viewModel.eventData.observe(viewLifecycleOwner) { events ->
-            val adapter = EventAdapter(events, this.viewModel)
-            recyclerView.adapter = adapter
+            val adapter = EventAdapter(requireContext(), events.toMutableList(), viewModel)
+            listView.adapter = adapter
         }
     }
 }

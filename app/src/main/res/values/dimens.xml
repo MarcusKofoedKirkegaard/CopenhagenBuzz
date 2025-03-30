@@ -1,3 +1,23 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="login_vertical_bias">0.45</dimen>
+    <dimen name="event_row_item_margin">10dp</dimen>
+    <dimen name="event_card_header_padding">8dp</dimen>
+    <dimen name="event_card_text_padding">16dp</dimen>
+    <dimen name="event_card_image_width">60dp</dimen>
+    <dimen name="event_card_image_height">60dp</dimen>
+    <dimen name="event_card_image_padding">10dp</dimen>
+    <dimen name="event_card_like_unlike_button_width">40dp</dimen>
+    <dimen name="event_card_like_unlike_button_height">40dp</dimen>
+    <dimen name="event_card_like_unlike_button_padding">8dp</dimen>
+    <dimen name="event_card_imageview_height">194dp</dimen>
+    <dimen name="event_card_text_margin_top">8dp</dimen>
+    <dimen name="event_card_action_buttons_margin">8dp</dimen>
+    <dimen name="add_event_horizontal_margin">16dp</dimen>
+    <dimen name="input_event_description_height">200dp</dimen>
+    <dimen name="add_event_button_margin">24dp</dimen>
+    <dimen name="add_event_button_elevation">8dp</dimen>
+    <dimen name="add_event_button_size">60dp</dimen>
+    <dimen name="fragment_timeline_listview_padding">10dp</dimen>
+    <dimen name="fragment_timeline_listview_divider_height">10dp</dimen>
 </resources>

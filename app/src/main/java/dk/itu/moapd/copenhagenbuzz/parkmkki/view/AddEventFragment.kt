@@ -84,7 +84,7 @@ class AddEventFragment : Fragment() {
                     )
 
                     // Update event using the EventController
-                    eventController.updateEvent(
+                    eventController.createEvent(
                         binding.editTextEventName.text.toString().trim(),
                         binding.editTextEventLocation.text.toString().trim(),
                         date,
@@ -118,7 +118,7 @@ class AddEventFragment : Fragment() {
      */
     private fun showMessage() {
         val event = eventController.getEvent()
-        Snackbar.make(binding.root, "Event added: ${event.toString()}", Snackbar.LENGTH_LONG).show()
+        Snackbar.make(binding.root, "Event added: $event", Snackbar.LENGTH_LONG).show()
         Log.d("AddEventFragment", event.toString())
     }
 

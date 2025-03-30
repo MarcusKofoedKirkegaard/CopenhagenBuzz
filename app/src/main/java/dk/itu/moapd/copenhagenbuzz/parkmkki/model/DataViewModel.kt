@@ -32,7 +32,6 @@ class DataViewModel : ViewModel() {
 
     // LiveData to expose errors to the UI (if any)
     private val _errorMessage = MutableLiveData<String?>()
-    val errorMessage: LiveData<String?> get() = _errorMessage
 
     init {
         loadEvents()
@@ -98,30 +97,5 @@ class DataViewModel : ViewModel() {
 
     private fun fetchFavoritesFromDatabase(): MutableList<Event> {
         return fetchEventsFromDatabase().filter { it.isFavorite }.toMutableList()
-    }
-
-    /**
-     * Adds a new event asynchronously.
-     *
-     * @param event The event to be added.
-     */
-    fun addEvent(event: Event) {
-        viewModelScope.launch {
-            try {
-                // Simulate adding an event asynchronously
-                val updatedList = _eventData.value.orEmpty().toMutableList()
-                updatedList.add(event)
-
-                // Simulate potential failure
-                if (Math.random() > 0.7) {
-                    throw Exception("Simulated error while adding event.")
-                }
-
-                _eventData.postValue(updatedList) // Update LiveData
-            } catch (e: Exception) {
-                // Handle error while adding event
-                _errorMessage.postValue("Error adding event: ${e.message}")
-            }
-        }
     }
 }

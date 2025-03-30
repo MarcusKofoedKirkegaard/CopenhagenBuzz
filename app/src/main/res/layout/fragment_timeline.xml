@@ -5,15 +5,12 @@
     android:layout_height="match_parent"
     tools:context=".view.TimelineFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/timeline_recycler_view"
+    <ListView
+        android:id="@+id/timeline_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp"
-        />
-
-
+        android:divider="@color/white"
+        android:dividerHeight="@dimen/fragment_timeline_listview_divider_height"
+        android:padding="@dimen/fragment_timeline_listview_padding"/>
 
 </FrameLayout>

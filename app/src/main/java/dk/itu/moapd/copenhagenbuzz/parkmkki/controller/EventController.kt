@@ -19,7 +19,7 @@ class EventController {
      * A single instance of an [Event] used for temporary storage.
      * Defaults to an empty event with the current date.
      */
-    private val event = Event("", "", LocalDate.now(), "", "", 0)
+    private lateinit var event: Event
 
     /**
      * Updates the stored event instance with new details.
@@ -30,12 +30,8 @@ class EventController {
      * @param type The type or category of the event.
      * @param description A brief description of the event.
      */
-    fun updateEvent(name: String, location: String, date: LocalDate, type: String, description: String) {
-        event.eventName = name
-        event.eventLocation = location
-        event.eventDate = date
-        event.eventType = type
-        event.eventDescription = description
+    fun createEvent(name: String, location: String, date: LocalDate, type: String, description: String) {
+        event = Event(name, location, date, type, description, 0)
     }
 
     /**

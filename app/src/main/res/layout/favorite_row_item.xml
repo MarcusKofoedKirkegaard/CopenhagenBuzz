@@ -12,9 +12,10 @@
         android:checkable="true"
         android:clickable="true"
         android:focusable="true"
-        tools:layout_editor_absoluteX="82dp"
-        tools:layout_editor_absoluteY="86dp"
-        tools:ignore="MissingConstraints">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -22,19 +23,17 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/favorite_profile_image"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="@dimen/event_card_image_width"
+                android:layout_height="@dimen/event_card_image_height"
                 app:shapeAppearanceOverlay="@style/circleImageView"
                 android:background="@color/lightGrey"
-                android:padding="8dp"
+                android:padding="@dimen/event_card_image_padding"
                 app:srcCompat="@drawable/baseline_person_24"
                 tools:ignore="HardcodedText"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_margin="@dimen/event_row_item_margin" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -44,38 +43,36 @@
                 app:layout_constraintEnd_toStartOf="@id/favorite_event_image"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp">
+                android:layout_marginStart="@dimen/event_row_item_margin"
+                android:layout_marginEnd="@dimen/event_row_item_margin">
 
                 <TextView
                     android:id="@+id/text_field_favorite_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Event name"
+                    android:text="@string/event_name"
                     android:textAppearance="?attr/textAppearanceTitleMedium" />
 
                 <TextView
                     android:id="@+id/text_field_favorite_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Event Type"
+                    android:text="@string/event_type"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="?android:attr/textColorSecondary" />
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/favorite_event_image"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:contentDescription="something about the harbour..."
+                android:layout_width="@dimen/event_card_image_width"
+                android:layout_height="@dimen/event_card_image_height"
+                android:contentDescription="@string/temp_content_description"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/test_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_margin="@dimen/event_row_item_margin" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
