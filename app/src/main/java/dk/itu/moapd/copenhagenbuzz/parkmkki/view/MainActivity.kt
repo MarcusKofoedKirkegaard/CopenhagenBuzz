@@ -59,6 +59,8 @@ class MainActivity : AppCompatActivity() {
 
         // Link bottom navigation with the navigation controller
         NavigationUI.setupWithNavController(binding.bottomNavigation, navController)
+
+        // LOOK THIS UP!
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id in listOf(R.id.nav_timeline, R.id.nav_maps, R.id.nav_calendar, R.id.nav_add_event, R.id.nav_favorites)) {
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
@@ -101,5 +103,6 @@ class MainActivity : AppCompatActivity() {
      */
     private fun navigateToLogin() {
         startActivity(Intent(this, LoginActivity::class.java))
+        finish()
     }
 }

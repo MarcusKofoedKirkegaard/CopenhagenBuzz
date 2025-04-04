@@ -42,6 +42,7 @@ class LoginActivity : AppCompatActivity() {
                 putExtra("isLoggedIn", true)
             }
             startActivity(intent)
+            finish()
         }
 
         // Set up guest login button click listener
@@ -50,6 +51,7 @@ class LoginActivity : AppCompatActivity() {
                 putExtra("isLoggedIn", false)
             }
             startActivity(intent)
+            finish()
         }
     }
 
