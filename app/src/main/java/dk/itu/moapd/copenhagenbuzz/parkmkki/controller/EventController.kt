@@ -7,6 +7,7 @@
 package dk.itu.moapd.copenhagenbuzz.parkmkki.controller
 
 import dk.itu.moapd.copenhagenbuzz.parkmkki.model.Event
+import dk.itu.moapd.copenhagenbuzz.parkmkki.model.EventLocation
 import java.time.LocalDate
 
 /**
@@ -14,12 +15,6 @@ import java.time.LocalDate
  * It provides methods to update and retrieve event data.
  */
 class EventController {
-
-    /**
-     * A single instance of an [Event] used for temporary storage.
-     * Defaults to an empty event with the current date.
-     */
-    private lateinit var event: Event
 
     /**
      * Updates the stored event instance with new details.
@@ -30,16 +25,7 @@ class EventController {
      * @param type The type or category of the event.
      * @param description A brief description of the event.
      */
-    fun createEvent(name: String, location: String, date: LocalDate, type: String, description: String) {
-        event = Event(name, location, date, type, description, 0)
-    }
-
-    /**
-     * Retrieves the current event instance.
-     *
-     * @return The stored [Event] object containing the latest event details.
-     */
-    fun getEvent(): Event {
-        return event
+    fun createEvent(uid: String, name: String, location: EventLocation, date: LocalDate, type: String, description: String): Event {
+        return Event(uid, name, location, date.toEpochDay(), type, description, "")
     }
 }

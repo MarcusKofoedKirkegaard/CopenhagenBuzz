@@ -99,6 +99,33 @@
             android:inputType="textAutoComplete" />
 
     </com.google.android.material.textfield.TextInputLayout>
+    <Button
+        android:id="@+id/buttonAddImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_field_event_type"
+        android:text="@string/addimage" />
+
+    <Button
+        android:id="@+id/buttonTakePicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonAddImage"
+        android:text="@string/takepicture" />
+
+    <ImageView
+        android:id="@+id/imagePreview"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/event_card_imageview_height"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonTakePicture"
+        android:visibility="gone" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_field_event_description"
@@ -108,7 +135,7 @@
         app:endIconMode="clear_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_field_event_type">
+        app:layout_constraintTop_toBottomOf="@+id/imagePreview">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_text_event_description"

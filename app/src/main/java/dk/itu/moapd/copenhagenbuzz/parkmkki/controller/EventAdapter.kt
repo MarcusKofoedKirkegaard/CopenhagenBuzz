@@ -14,9 +14,19 @@ import android.widget.BaseAdapter
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import com.google.android.material.button.MaterialButton
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.database
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.storage
+import com.squareup.picasso.Picasso
 import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 import dk.itu.moapd.copenhagenbuzz.parkmkki.model.DataViewModel
 import dk.itu.moapd.copenhagenbuzz.parkmkki.model.Event
+import dk.itu.moapd.copenhagenbuzz.parkmkki.model.EventLocation
+import java.util.Locale
 
 /**
  * Adapter used to display a list of [Event] objects in a list view.
@@ -81,6 +91,9 @@ class EventAdapter(
         val eventImage: ImageView = view.findViewById(R.id.event_image)
         val likeButton: ImageButton = view.findViewById(R.id.like_button)
         val unlikeButton: ImageButton = view.findViewById(R.id.unlike_button)
+        val thumbsupButton: ImageButton = view.findViewById(R.id.thumbsup_button)
+        val thumbsupCounter: TextView = view.findViewById(R.id.thumbsup_counter)
+        val editButton: MaterialButton = view.findViewById(R.id.button_event_edit)
 
         // Get the event at the current position
         val event = eventList[position]
@@ -88,14 +101,20 @@ class EventAdapter(
         // Bind the event data to the views
         eventName.text = event.eventName
         eventType.text = event.eventType
-        eventLocation.text = event.eventLocation
+        eventLocation.text = event.eventLocation.address
         eventDate.text = event.eventDate.toString()
         eventDescription.text = event.eventDescription
-        eventImage.setImageResource(event.eventImageId)
+        event.eventImagePath?.let { imageUrl ->
+            FirebaseStorage.getInstance().reference
+                .child(imageUrl).downloadUrl.addOnSuccessListener { url ->
+                    Picasso.get().load(url).into(eventImage)
+                }
+        }
 
         // Set visibility of like/unlike buttons based on the event's favorite status
         likeButton.visibility = if (event.isFavorite) View.GONE else View.VISIBLE
         unlikeButton.visibility = if (event.isFavorite) View.VISIBLE else View.GONE
+        editButton.visibility = if (event.eventCreator == FirebaseAuth.getInstance().currentUser?.uid.toString()) View.VISIBLE else View.GONE
 
         // Set onClick listeners to toggle favorite status
         likeButton.setOnClickListener {
@@ -108,6 +127,13 @@ class EventAdapter(
             event.isFavorite = false
             viewModel.updateEvent(event)  // Update the event's favorite status in the ViewModel
             notifyDataSetChanged()  // Notify the adapter that the data has changed
+        }
+
+        thumbsupButton.setOnClickListener {
+            event.eventThumbsUp += 1
+            thumbsupCounter.text = String.format(Locale.getDefault(), "%d", event.eventThumbsUp)
+            viewModel.updateEvent(event)
+            notifyDataSetChanged()
         }
 
         return view

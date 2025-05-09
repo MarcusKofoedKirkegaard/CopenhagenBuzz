@@ -16,6 +16,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.ActivityMainBinding
 import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 
@@ -33,6 +34,8 @@ class MainActivity : AppCompatActivity() {
      * Configuration for the navigation bar to manage top-level destinations.
      */
     private lateinit var appBarConfiguration: AppBarConfiguration
+
+    private lateinit var auth: FirebaseAuth
 
     /**
      * Called when the activity is created.
@@ -71,6 +74,20 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        auth = FirebaseAuth.getInstance()
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        auth.currentUser ?: startLoginActivity()
+    }
+
+    private fun startLoginActivity() {
+        Intent(this, FirebaseLoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }.let(::startActivity)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -87,6 +104,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.logout -> {
+                FirebaseAuth.getInstance().signOut()
                 navigateToLogin()
                 true
             }
@@ -102,7 +120,8 @@ class MainActivity : AppCompatActivity() {
      * Navigates the user to the LoginActivity.
      */
     private fun navigateToLogin() {
-        startActivity(Intent(this, LoginActivity::class.java))
-        finish()
+        Intent(this, FirebaseLoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }.let(::startActivity)
     }
 }

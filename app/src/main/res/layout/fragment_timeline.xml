@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     tools:context=".view.TimelineFragment">
 
-    <ListView
-        android:id="@+id/timeline_list_view"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/timeline_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@color/white"
         android:dividerHeight="@dimen/fragment_timeline_listview_divider_height"
-        android:padding="@dimen/fragment_timeline_listview_padding"/>
+        android:padding="@dimen/fragment_timeline_listview_padding" />
 
 </FrameLayout>

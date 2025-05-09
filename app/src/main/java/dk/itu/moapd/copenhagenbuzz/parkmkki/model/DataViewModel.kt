@@ -89,9 +89,9 @@ class DataViewModel : ViewModel() {
      */
     private fun fetchEventsFromDatabase(): MutableList<Event> {
         return mutableListOf(
-            Event("Concert Night", "Copenhagen", LocalDate.now(), "Concert", "Enjoy live music at the city square", R.drawable.test_image, true),
-            Event("Food Festival", "Copenhagen", LocalDate.now(), "Festival", "Taste delicious street food from local vendors", R.drawable.test_image, false),
-            Event("Art Exhibition", "Copenhagen", LocalDate.now(), "Exhibition", "Explore the latest contemporary art collections", R.drawable.test_image, false)
+            Event("", "Concert Night", EventLocation(0.0, 0.0, "Copenhagen"), LocalDate.now().toEpochDay(), "Concert", "Enjoy live music at the city square", "", true, 0),
+            Event("", "Food Festival", EventLocation(0.0, 0.0, "Copenhagen"), LocalDate.now().toEpochDay(), "Festival", "Taste delicious street food from local vendors", "", false, 0),
+            Event("", "Art Exhibition", EventLocation(0.0, 0.0, "Copenhagen"), LocalDate.now().toEpochDay(), "Exhibition", "Explore the latest contemporary art collections", "", false, 0)
         )
     }
 

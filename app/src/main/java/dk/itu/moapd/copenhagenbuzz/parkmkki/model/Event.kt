@@ -20,13 +20,15 @@ import java.time.LocalDate
  *@see "https://kotlinlang.org/docs/data-classes.html#properties-declared-in-the-class-body"
  */
 data class Event(
+    val eventCreator: String ="",
     val eventName: String ="",
-    val eventLocation: String="",
-    val eventDate: LocalDate,
+    val eventLocation: EventLocation= EventLocation(0.0, 0.0, "Unknown"),
+    val eventDate: Long=0,
     val eventType: String="",
     val eventDescription: String="",
-    val eventImageId: Int,
-    var isFavorite: Boolean = false
+    val eventImagePath: String="",
+    var isFavorite: Boolean = false,
+    var eventThumbsUp: Int=0
 ) {
 
 

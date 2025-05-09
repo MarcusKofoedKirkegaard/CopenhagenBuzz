@@ -57,7 +57,7 @@ class FavoriteAdapter(private val favoriteList: List<Event>) :
         val event = favoriteList[position]
         holder.eventName.text = event.eventName
         holder.eventType.text = event.eventType
-        holder.eventImage.id = event.eventImageId
+       // holder.eventImage.id = event.eventImageId
     }
 
     /**
