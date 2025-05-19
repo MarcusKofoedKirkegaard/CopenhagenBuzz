@@ -4,9 +4,7 @@
  * Copyright (c) [2025] [Emil Parkel & Marcus Kofoed Kirkegaard]
  * See README for more
  */
-package dk.itu.moapd.copenhagenbuzz.parkmkki.model
-
-import java.time.LocalDate
+package dk.itu.moapd.copenhagenbuzz.parkmkki.models
 
 /**
  * Event data class
@@ -22,7 +20,7 @@ import java.time.LocalDate
 data class Event(
     val eventCreator: String ="",
     val eventName: String ="",
-    val eventLocation: EventLocation= EventLocation(0.0, 0.0, "Unknown"),
+    val eventLocation: EventLocation = EventLocation(0.0, 0.0, "Unknown"),
     val eventDate: Long=0,
     val eventType: String="",
     val eventDescription: String="",

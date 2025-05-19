@@ -18,10 +18,12 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package dk.itu.moapd.copenhagenbuzz.parkmkki.model
+package dk.itu.moapd.copenhagenbuzz.parkmkki.models
 
-interface OnItemClickListener  {
+import com.google.firebase.database.IgnoreExtraProperties
 
-    fun onItemClickListener(dummy: Event, position: Int)
-
-}
+/**
+ * A model class with all parameters to represent a `Image` object in the database.
+ */
+@IgnoreExtraProperties
+data class Image(val url: String? = null, val path: String? = null, val createdAt: Long? = null)

@@ -4,7 +4,7 @@
  * Copyright (c) [2025] [Emil Parkel & Marcus Kofoed Kirkegaard]
  * See README for more
  */
-package dk.itu.moapd.copenhagenbuzz.parkmkki.view
+package dk.itu.moapd.copenhagenbuzz.parkmkki.views.activities
 
 import android.content.Intent
 import android.os.Bundle

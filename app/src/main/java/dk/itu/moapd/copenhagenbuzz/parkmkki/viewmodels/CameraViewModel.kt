@@ -1,4 +1,4 @@
-package dk.itu.moapd.copenhagenbuzz.parkmkki.model
+package dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels
 
 import androidx.camera.core.CameraSelector
 import androidx.lifecycle.LiveData

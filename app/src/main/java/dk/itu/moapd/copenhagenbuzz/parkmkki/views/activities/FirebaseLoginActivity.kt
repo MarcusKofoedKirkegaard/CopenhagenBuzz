@@ -1,4 +1,4 @@
-package dk.itu.moapd.copenhagenbuzz.parkmkki.view
+package dk.itu.moapd.copenhagenbuzz.parkmkki.views.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,8 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
-import com.google.firebase.auth.FirebaseAuth
-import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 
 /**
  * Activity that handles Firebase authentication via UI and manages the user login process.

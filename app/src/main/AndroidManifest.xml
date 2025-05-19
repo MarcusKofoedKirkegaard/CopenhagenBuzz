@@ -7,7 +7,7 @@
         android:name="android.hardware.camera"
         android:required="false" />
     <application
-        android:name=".model.MyApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -18,7 +18,7 @@
         android:theme="@style/Theme.CopenhagenBuzz"
         tools:targetApi="31">
         <activity
-            android:name=".view.FirebaseLoginActivity"
+            android:name=".views.activities.FirebaseLoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,14 +27,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.MainActivity"
+            android:name=".views.activities.MainActivity"
             android:exported="false"
             android:theme="@style/Theme.CopenhagenBuzz">
         </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${GOOGLE_MAPS_API_KEY}" />
+            android:value="AIzaSyBFuROiNvfzqZREuzmVvtgXL-mTqB3BOmQ" />
 
     </application>
     <uses-permission

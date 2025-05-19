@@ -4,7 +4,7 @@
  * Copyright (c) [2025] [Emil Parkel & Marcus Kofoed Kirkegaard]
  * See README for more
  */
-package dk.itu.moapd.copenhagenbuzz.parkmkki.model
+package dk.itu.moapd.copenhagenbuzz.parkmkki.models
 
 data class EventLocation(
     val latitude: Double =0.0,

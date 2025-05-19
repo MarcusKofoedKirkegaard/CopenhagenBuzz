@@ -1,10 +1,4 @@
-/*
- * (License Notice)
- * MIT License
- * Copyright (c) [2025] [Emil Parkel & Marcus Kofoed Kirkegaard]
- * See README for more
- */
-package dk.itu.moapd.copenhagenbuzz.parkmkki.view
+package dk.itu.moapd.copenhagenbuzz.parkmkki.views.fragments
 
 import android.Manifest
 import android.content.ContentValues
@@ -27,16 +21,14 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.database
-import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storage
-import dk.itu.moapd.copenhagenbuzz.parkmkki.controller.EventController
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.FragmentAddEventBinding
-import dk.itu.moapd.copenhagenbuzz.parkmkki.model.Event
-import dk.itu.moapd.copenhagenbuzz.parkmkki.model.EventLocation
-import java.time.LocalDate
+import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
+import dk.itu.moapd.copenhagenbuzz.parkmkki.models.EventLocation
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.UUID
+
 
 /**
  * Fragment for adding a new event.
@@ -56,11 +48,6 @@ class AddEventFragment : Fragment() {
     private val binding get() = requireNotNull(_binding) {
         "Cannot access binding because it is null. Is the view visible?"
     }
-
-    /**
-     * Controller instance for managing event data.
-     */
-    private val eventController = EventController()
 
     /**
      * Date formatter for parsing user input dates.
@@ -104,7 +91,11 @@ class AddEventFragment : Fragment() {
             // Permissions granted, proceed to take photo or pick image
         } else {
             // Permissions not granted, inform user they need to grant permissions
-            Toast.makeText(context, "Permissions are required to use the camera.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                "Permissions are required to use the camera.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -113,7 +104,11 @@ class AddEventFragment : Fragment() {
             Manifest.permission.CAMERA
         )
 
-        val permissionsNeeded = permissions.filter { ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED }
+        val permissionsNeeded = permissions.filter { ContextCompat.checkSelfPermission(
+            requireContext(),
+            it
+        ) != PackageManager.PERMISSION_GRANTED
+        }
 
         if (permissionsNeeded.isEmpty()) {
             val uri = createImageUri()
@@ -165,7 +160,11 @@ class AddEventFragment : Fragment() {
                         val event = Event(
                             user.uid,
                             binding.editTextEventName.text.toString().trim(),
-                            EventLocation(0.0, 0.0, binding.editTextEventLocation.text.toString().trim()),
+                            EventLocation(
+                                0.0,
+                                0.0,
+                                binding.editTextEventLocation.text.toString().trim()
+                            ),
                             binding.editTextEventDate.text.toString().trim().toLong(),
                             binding.editTextEventType.text.toString().trim(),
                             binding.editTextEventLocation.text.toString().trim(),

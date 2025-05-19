@@ -7,27 +7,27 @@
 
     <fragment
         android:id="@+id/nav_add_event"
-        android:name="dk.itu.moapd.copenhagenbuzz.parkmkki.view.AddEventFragment"
+        android:name="dk.itu.moapd.copenhagenbuzz.parkmkki.views.fragments.AddEventFragment"
         tools:layout="@layout/fragment_add_event" >
     </fragment>
     <fragment
         android:id="@+id/nav_favorites"
-        android:name="dk.itu.moapd.copenhagenbuzz.parkmkki.view.FavoritesFragment"
+        android:name="dk.itu.moapd.copenhagenbuzz.parkmkki.views.fragments.FavoritesFragment"
         tools:layout="@layout/fragment_favorites" >
     </fragment>
     <fragment
         android:id="@+id/nav_timeline"
-        android:name="dk.itu.moapd.copenhagenbuzz.parkmkki.view.TimelineFragment"
+        android:name="dk.itu.moapd.copenhagenbuzz.parkmkki.views.fragments.TimelineFragment"
         tools:layout="@layout/fragment_timeline" >
     </fragment>
     <fragment
         android:id="@+id/nav_maps"
-        android:name="dk.itu.moapd.copenhagenbuzz.parkmkki.view.MapsFragment"
+        android:name="dk.itu.moapd.copenhagenbuzz.parkmkki.views.fragments.MapsFragment"
         tools:layout="@layout/fragment_maps" >
     </fragment>
     <fragment
         android:id="@+id/nav_calendar"
-        android:name="dk.itu.moapd.copenhagenbuzz.parkmkki.view.CalendarFragment"
+        android:name="dk.itu.moapd.copenhagenbuzz.parkmkki.views.fragments.CalendarFragment"
         tools:layout="@layout/fragment_calendar" >
     </fragment>
 </navigation>

@@ -1,4 +1,4 @@
-package dk.itu.moapd.copenhagenbuzz.parkmkki.view
+package dk.itu.moapd.copenhagenbuzz.parkmkki.views.fragments
 
 import android.Manifest
 import android.content.ContentValues
@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,10 +20,11 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.snackbar.Snackbar
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.FragmentCameraBinding
-import dk.itu.moapd.copenhagenbuzz.parkmkki.model.CameraViewModel
+import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.CameraViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -126,7 +126,8 @@ class CameraFragment : Fragment() {
             // Listener for viewing the captured image.
             buttonImageViewer.setOnClickListener {
                 imageUri?.let { uri ->
-                    val bundle = bundleOf("ARG_IMAGE" to uri.toString()) // Pass URI in a bundle for viewing.
+                    val bundle =
+                        bundleOf("ARG_IMAGE" to uri.toString()) // Pass URI in a bundle for viewing.
                 }
             }
         }
@@ -254,12 +255,11 @@ class CameraFragment : Fragment() {
         }
 
         // Create output file options for the captured image.
-        val outputFileOptions = ImageCapture.OutputFileOptions
-            .Builder(
-                requireActivity().contentResolver,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues
-            )
+        val outputFileOptions = ImageCapture.OutputFileOptions.Builder(
+            requireActivity().contentResolver,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
             .build()
 
         // Capture the image and save it to the device.

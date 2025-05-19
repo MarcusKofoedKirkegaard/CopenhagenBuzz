@@ -4,10 +4,11 @@
  * Copyright (c) [2025] [Emil Parkel & Marcus Kofoed Kirkegaard]
  * See README for more
  */
-package dk.itu.moapd.copenhagenbuzz.parkmkki.model
+package dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels
 
 import androidx.lifecycle.*
-import dk.itu.moapd.copenhagenbuzz.parkmkki.R
+import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
+import dk.itu.moapd.copenhagenbuzz.parkmkki.models.EventLocation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

@@ -1,4 +1,4 @@
-package dk.itu.moapd.copenhagenbuzz.parkmkki.model
+package dk.itu.moapd.copenhagenbuzz.parkmkki.services
 
 import android.app.Service
 import android.content.Intent
