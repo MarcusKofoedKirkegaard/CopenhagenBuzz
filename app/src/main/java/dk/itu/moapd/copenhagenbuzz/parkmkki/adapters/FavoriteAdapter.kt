@@ -3,8 +3,10 @@ package dk.itu.moapd.copenhagenbuzz.parkmkki.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.FavoriteRowItemBinding
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
 import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
@@ -27,9 +29,11 @@ class FavoriteAdapter(private val dataViewModel: DataViewModel, options: Firebas
             with(binding) {
                 textFieldFavoriteName.text = event.eventName
                 textFieldFavoriteType.text = event.eventType
-
-                // Uncomment if you integrate an image loader like Glide or Picasso:
-                // Glide.with(root).load(event.imageUrl).into(favoriteEventImage)
+                Glide.with(favoriteEventImage.context)
+                    .load(event.eventImagePath)
+                    .placeholder(R.drawable.test_image)
+                    .error(R.drawable.test_image)
+                    .into(favoriteEventImage)
             }
         }
     }
