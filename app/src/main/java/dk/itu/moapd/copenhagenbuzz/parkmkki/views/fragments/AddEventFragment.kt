@@ -9,8 +9,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.location.Geocoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -126,15 +128,38 @@ class AddEventFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if ((requestCode == REQUEST_IMAGE_CAPTURE || requestCode == REQUEST_IMAGE_PICK) && resultCode == Activity.RESULT_OK) {
-            Log.i("Checking pick", "Do i get called for pick")
-            val imageBitmap = data?.extras?.get("data") as? Bitmap
-            imageBitmap?.let {
-                val baos = ByteArrayOutputStream()
-                it.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                photoByteArray = baos.toByteArray()
-                binding.imagePreview.setImageBitmap(it)
-                binding.imagePreview.visibility = View.VISIBLE
+        if (resultCode != Activity.RESULT_OK || data == null) return
+
+        when (requestCode) {
+            REQUEST_IMAGE_CAPTURE -> {
+                val imageBitmap = data.extras?.get("data") as? Bitmap
+                imageBitmap?.let {
+                    val baos = ByteArrayOutputStream()
+                    it.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                    photoByteArray = baos.toByteArray()
+                    binding.imagePreview.setImageBitmap(it)
+                    binding.imagePreview.visibility = View.VISIBLE
+                }
+            }
+
+            REQUEST_IMAGE_PICK -> {
+                val imageUri: Uri? = data.data
+                if (imageUri != null) {
+                    // Check for sdk version, as getBitMap is deprecated
+                    val bitmap = if (Build.VERSION.SDK_INT < 28) {
+                        MediaStore.Images.Media.getBitmap(requireContext().contentResolver, imageUri)
+                    } else {
+                        val source = ImageDecoder.createSource(requireContext().contentResolver, imageUri)
+                        ImageDecoder.decodeBitmap(source)
+                    }
+                    val baos = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                    photoByteArray = baos.toByteArray()
+                    binding.imagePreview.setImageBitmap(bitmap)
+                    binding.imagePreview.visibility = View.VISIBLE
+                } else {
+                    showToast("Failed to pick image")
+                }
             }
         }
     }
