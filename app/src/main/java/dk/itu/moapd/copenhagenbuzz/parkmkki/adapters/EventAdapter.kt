@@ -9,6 +9,9 @@ import com.firebase.ui.database.FirebaseListOptions
 import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
 import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Adapter for the Timeline ListView using FirebaseListAdapter.
@@ -18,7 +21,7 @@ import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
  */
 class EventAdapter(
     private val dataViewModel: DataViewModel,
-    var options: FirebaseListOptions<Event>
+    options: FirebaseListOptions<Event>
 ) : FirebaseListAdapter<Event>(options) {
 
     private class ViewHolder(view: View) {
@@ -43,7 +46,8 @@ class EventAdapter(
         eventName.text = event.eventName
         eventType.text = event.eventType
         eventLocation.text = event.eventLocation.address
-        eventDate.text = event.eventDate.toString() // Måske brug string format i stedet
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        eventDate.text = sdf.format(Date(event.eventDate))
         eventDescription.text = event.eventDescription
 
         Glide.with(image.context)

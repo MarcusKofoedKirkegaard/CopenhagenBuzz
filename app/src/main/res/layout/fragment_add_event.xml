@@ -46,18 +46,21 @@
         android:id="@+id/text_field_event_location"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/event_location"
         app:endIconMode="clear_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_field_event_name"
         app:startIconDrawable="@drawable/baseline_add_location_alt_24">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <EditText
             android:id="@+id/edit_text_event_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text" />
+            android:autofillHints="location"
+            android:hint="@string/event_location"
+            android:inputType="textPostalAddress" />
+
+
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -65,19 +68,21 @@
         android:id="@+id/text_field_event_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/event_date"
         app:endIconMode="clear_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_field_event_location"
         app:startIconDrawable="@drawable/sharp_calendar_month_24">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <EditText
             android:id="@+id/edit_text_event_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:placeholderText="dd/mm/yyyy"
-            android:inputType="text" />
+            android:autofillHints="date"
+            android:hint="@string/event_date"
+            android:inputType="date"
+            android:maxLength="10" />
+
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -121,6 +126,7 @@
         android:id="@+id/imagePreview"
         android:layout_width="match_parent"
         android:layout_height="@dimen/event_card_imageview_height"
+        android:contentDescription="@string/preview_of_image_to_add"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

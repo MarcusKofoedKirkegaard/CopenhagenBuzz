@@ -17,12 +17,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.FragmentMapsBinding
 import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 
 class MapsFragment : Fragment() {
-
-
     private var _binding: FragmentMapsBinding? = null
     private val viewModel: DataViewModel by activityViewModels()
+    private val drawnPoints = mutableListOf<LatLng>()
+    private var drawnPolyline: Polyline? = null
 
     private val binding
         get() = requireNotNull(_binding) {
@@ -53,8 +55,7 @@ class MapsFragment : Fragment() {
                     fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                         location?.let {
                             val currentLatLng = LatLng(it.latitude, it.longitude)
-                            //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(itu, 12f))
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
                         }
                     }
                 }
@@ -69,8 +70,20 @@ class MapsFragment : Fragment() {
                         )
                     }
                 }
+
+                googleMap.setOnMapClickListener { latLng ->
+                    drawnPoints.add(latLng)
+
+                    drawnPolyline?.remove()
+
+                    drawnPolyline = googleMap.addPolyline(
+                        PolylineOptions()
+                            .addAll(drawnPoints)
+                            .color(android.graphics.Color.RED)
+                            .width(8f)
+                    )
+                }
             } catch (e: SecurityException) {
-                // Should never happen with permission check, but safe to log
                 e.printStackTrace()
             }
         } else {
@@ -90,6 +103,11 @@ class MapsFragment : Fragment() {
         val mapFragment = childFragmentManager
             .findFragmentById(binding.map.id) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
+
+        binding.resetDrawingBtn.setOnClickListener {
+            drawnPoints.clear()
+            drawnPolyline?.remove()
+        }
     }
 
     private fun checkPermission() =

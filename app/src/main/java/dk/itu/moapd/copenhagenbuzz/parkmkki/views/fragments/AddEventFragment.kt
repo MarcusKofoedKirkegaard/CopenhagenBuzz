@@ -32,13 +32,14 @@ import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
-import java.util.Locale
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AddEventFragment : Fragment() {
 
     private var _binding: FragmentAddEventBinding? = null
-    private val binding get() = requireNotNull(_binding) { "Cannot access binding because it is null. Is the view visible?" }
-
+    private val binding get() = requireNotNull(_binding)
     private val viewModel: DataViewModel by activityViewModels()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -66,7 +67,9 @@ class AddEventFragment : Fragment() {
     private fun setupClickListeners() {
         binding.fabAddEvent.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                onAddEvent()
+                if (validateInputs()) {
+                    onAddEvent()
+                }
             }
         }
 
@@ -79,15 +82,121 @@ class AddEventFragment : Fragment() {
         }
     }
 
+    private suspend fun onAddEvent() {
+        val event = createEvent() ?: run {
+            showToast("Failed to create event.")
+            return
+        }
+
+        viewModel.addEvent(event, photoByteArray)
+        showToast("Event '${event.eventName}' added.")
+        clearTextFields()
+    }
+
+    private fun validateInputs(): Boolean {
+        val name = binding.editTextEventName.text.toString().trim()
+        val type = binding.editTextEventType.text.toString().trim()
+        val dateStr = binding.editTextEventDate.text.toString().trim()
+        val location = binding.editTextEventLocation.text.toString().trim()
+
+        if (name.isEmpty() || type.isEmpty() || dateStr.isEmpty() || location.isEmpty()) {
+            showToast("All fields are required.")
+            return false
+        }
+
+        if (!isValidDate(dateStr)) {
+            showToast("Date must be in dd/MM/yyyy format.")
+            return false
+        }
+
+        if (!isValidAddress(location)) {
+            showToast("Invalid address: '$location'. Please enter a valid location.")
+            return false
+        }
+
+        return true
+    }
+
+    private fun isValidDate(dateStr: String): Boolean {
+        return try {
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            sdf.isLenient = false
+            sdf.parse(dateStr)
+            true
+        } catch (e: ParseException) {
+            false
+        }
+    }
+
+    private fun isValidAddress(address: String): Boolean {
+        return try {
+            val geocoder = Geocoder(requireContext(), Locale.getDefault())
+            val results = geocoder.getFromLocationName(address, 1)
+            !results.isNullOrEmpty()
+        } catch (e: Exception) {
+            Log.e("AddEventFragment", "Geocoding failed: ${e.message}", e)
+            false
+        }
+    }
+
+    private fun showToast(msg: String) {
+        Snackbar.make(binding.root, msg, Snackbar.LENGTH_LONG).show()
+    }
+
+    private suspend fun createEvent(): Event? {
+        val user = viewModel.getCurrentUser() ?: return null
+
+        val name = binding.editTextEventName.text.toString().trim()
+        val type = binding.editTextEventType.text.toString().trim()
+        val dateStr = binding.editTextEventDate.text.toString().trim()
+        val description = binding.editTextEventDescription.text.toString().trim()
+        val timestamp = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(dateStr)?.time
+            ?: return null
+
+        val location = getEventLocation()
+
+        return Event(user.uid, name, location, timestamp, type, description, imagePath)
+    }
+
+    @SuppressLint("MissingPermission")
+    private suspend fun getEventLocation(): EventLocation {
+        val addressInput = binding.editTextEventLocation.text.toString().trim()
+        val geo = Geocoder(requireContext(), Locale.getDefault())
+
+        if (addressInput.isNotEmpty()) {
+            val results = geo.getFromLocationName(addressInput, 1)
+            if (!results.isNullOrEmpty()) {
+                val loc = results[0]
+                return EventLocation(loc.latitude, loc.longitude, addressInput)
+            }
+        }
+
+        val fallback = fusedLocationClient.lastLocation.await()
+        return fallback?.let {
+            val addr = geo.getFromLocation(it.latitude, it.longitude, 1)
+                ?.firstOrNull()?.getAddressLine(0) ?: "Unknown location"
+            EventLocation(it.latitude, it.longitude, addr)
+        } ?: EventLocation(55.40, 72.9097, "Default address")
+    }
+
+    private fun clearTextFields() {
+        binding.editTextEventName.text?.clear()
+        binding.editTextEventType.text?.clear()
+        binding.editTextEventLocation.text?.clear()
+        binding.editTextEventDate.text?.clear()
+        binding.editTextEventDescription.text?.clear()
+        binding.imagePreview.setImageBitmap(null)
+        binding.imagePreview.visibility = View.GONE
+        photoByteArray = ByteArray(0)
+    }
+
     private fun startTakeImageIntent() {
-        if (checkPermissionsCamera()) {
-            if (isCameraPermissionEnabled()) {
-                val takeImageIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                try {
-                    startActivityForResult(takeImageIntent, REQUEST_IMAGE_CAPTURE)
-                } catch (e: ActivityNotFoundException) {
-                    showToast("Error: could not get image")
-                }
+        if (isCameraPermissionEnabled()) {
+            val takeImageIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            try {
+                startActivityForResult(takeImageIntent, REQUEST_IMAGE_CAPTURE)
+            } catch (e: ActivityNotFoundException) {
+                showToast("Unable to open camera.")
             }
         } else {
             requestCameraPermission()
@@ -108,19 +217,12 @@ class AddEventFragment : Fragment() {
         )
     }
 
-    private fun checkPermissionsCamera(): Boolean {
-        return ActivityCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
     private fun pickImageFromGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        Log.i("Pick", intent.toString())
         startActivityForResult(intent, REQUEST_IMAGE_PICK)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -141,7 +243,6 @@ class AddEventFragment : Fragment() {
             REQUEST_IMAGE_PICK -> {
                 val imageUri: Uri? = data.data
                 if (imageUri != null) {
-                    // Check for sdk version, as getBitMap is deprecated
                     val bitmap = if (Build.VERSION.SDK_INT < 28) {
                         MediaStore.Images.Media.getBitmap(requireContext().contentResolver, imageUri)
                     } else {
@@ -158,87 +259,6 @@ class AddEventFragment : Fragment() {
                 }
             }
         }
-    }
-
-    private suspend fun onAddEvent() {
-        if (!validateInputs()) {
-            showToast("Please fill all fields and add an image")
-            return
-        }
-
-        val event = createEvent() ?: run {
-            showToast("Cannot create event; User must log in")
-            return
-        }
-
-        viewModel.addEvent(event, photoByteArray)
-        showToast("Successfully added event ${event.eventName}!")
-        clearTextFields()
-    }
-
-    private fun validateInputs(): Boolean {
-        return !binding.editTextEventName.text.isNullOrEmpty() &&
-                !binding.editTextEventType.text.isNullOrEmpty()// &&
-                //photoByteArray.isNotEmpty()
-    }
-
-    private fun showToast(msg: String) {
-        Snackbar.make(binding.root, msg, Snackbar.LENGTH_LONG).show()
-    }
-
-    private suspend fun createEvent(): Event? {
-        val user = viewModel.getCurrentUser() ?: return null
-        val name = binding.editTextEventName.text.toString()
-        val type = binding.editTextEventType.text.toString()
-        val date = binding.editTextEventDate.text.toString()
-        val description = binding.editTextEventDescription.text.toString()
-        val location = getEventLocation()
-        return Event(user.uid, name, location, date.toLong(), type, description, imagePath, )
-    }
-
-    @SuppressLint("MissingPermission")
-    private suspend fun getEventLocation(): EventLocation {
-        val geo = Geocoder(requireContext(), Locale.getDefault())
-        val address = binding.editTextEventLocation.text.toString()
-
-        if (address.isNotBlank()) {
-            geo.getFromLocationName(address, 1)?.firstOrNull()?.let { placemark ->
-                return EventLocation(
-                    placemark.latitude,
-                    placemark.longitude,
-                    address
-                )
-            }
-        }
-
-        val location = fusedLocationClient.lastLocation.await()
-        location?.let {
-            val line = geo.getFromLocation(it.latitude, it.longitude, 1)
-                ?.firstOrNull()
-                ?.getAddressLine(0)
-                .toString()
-                .takeUnless { it.isNullOrBlank() }
-                ?: "Unknown location"
-
-            return EventLocation(
-                it.latitude,
-                it.longitude,
-                line
-            )
-        }
-
-        return EventLocation(55.40, 72.9097, "Default address")
-    }
-
-    private fun clearTextFields() {
-        binding.editTextEventName.text?.clear()
-        binding.editTextEventType.text?.clear()
-        binding.editTextEventLocation.text?.clear()
-        binding.editTextEventDate.text?.clear()
-        binding.imagePreview.setImageBitmap(null)
-        binding.imagePreview.visibility = View.GONE
-        binding.editTextEventDescription.text?.clear()
-        photoByteArray = ByteArray(0)
     }
 
     companion object {
