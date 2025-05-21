@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
         // LOOK THIS UP!
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id in listOf(R.id.nav_timeline, R.id.nav_maps, R.id.nav_calendar, R.id.nav_add_event, R.id.nav_favorites)) {
+            if (destination.id in listOf(R.id.nav_timeline, R.id.nav_maps, R.id.nav_add_event, R.id.nav_favorites)) {
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
                 val toolbar = findViewById<MaterialToolbar>(R.id.top_app_bar)
                 toolbar.navigationIcon = null

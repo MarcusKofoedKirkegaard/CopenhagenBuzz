@@ -20,9 +20,4 @@
         android:enabled="true"
         android:icon="@drawable/baseline_location_pin_24"
         android:title="@string/maps" />
-    <item
-        android:id="@+id/nav_calendar"
-        android:enabled="true"
-        android:icon="@drawable/baseline_calendar_today_24"
-        android:title="@string/calendar" />
 </menu>
