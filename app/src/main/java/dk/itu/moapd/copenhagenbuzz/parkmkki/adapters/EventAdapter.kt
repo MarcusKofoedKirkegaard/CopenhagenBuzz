@@ -1,7 +1,9 @@
 package dk.itu.moapd.copenhagenbuzz.parkmkki.adapters
 
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.firebase.ui.database.FirebaseListAdapter
 import com.firebase.ui.database.FirebaseListOptions
 import dk.itu.moapd.copenhagenbuzz.parkmkki.R
@@ -27,6 +29,7 @@ class EventAdapter(
         val eventDescription: TextView = view.findViewById(R.id.text_field_event_description)
         val favoriteButton: View = view.findViewById(R.id.favorite_button)
         val unFavoriteButton: View = view.findViewById(R.id.unfavorite_button)
+        val image: ImageView = view.findViewById(R.id.event_image)
     }
 
     override fun populateView(v: View, model: Event, position: Int) {
@@ -42,6 +45,12 @@ class EventAdapter(
         eventLocation.text = event.eventLocation.address
         eventDate.text = event.eventDate.toString() // Måske brug string format i stedet
         eventDescription.text = event.eventDescription
+
+        Glide.with(image.context)
+            .load(event.eventImagePath)
+            .placeholder(R.drawable.test_image)
+            .error(R.drawable.test_image)
+            .into(image)
 
         if (eventKey == null) {
             favoriteButton.visibility = View.GONE

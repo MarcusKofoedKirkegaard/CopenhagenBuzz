@@ -8,17 +8,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.FragmentMapsBinding
+import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
 
 class MapsFragment : Fragment() {
 
 
     private var _binding: FragmentMapsBinding? = null
+    private val viewModel: DataViewModel by activityViewModels()
 
     private val binding
         get() = requireNotNull(_binding) {
@@ -30,23 +34,44 @@ class MapsFragment : Fragment() {
     }
 
     private val callback = OnMapReadyCallback { googleMap ->
+        googleMap.uiSettings.isZoomControlsEnabled = true
+        googleMap.uiSettings.isCompassEnabled = true
+        googleMap.uiSettings.isMapToolbarEnabled = true
 
         val itu = LatLng(55.6596, 12.5910)
         googleMap.addMarker(MarkerOptions().position(itu).title("IT University of Copenhagen"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(itu))
-
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(itu, 15f)) // <- Added zoom
         googleMap.setPadding(0, 100, 0, 0)
 
         if (checkPermission()) {
-            if (ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                return@OnMapReadyCallback
+            try {
+                googleMap.isMyLocationEnabled = true // ✅ Enable current location marker
+
+                val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                        location?.let {
+                            val currentLatLng = LatLng(it.latitude, it.longitude)
+                            //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(itu, 5f))
+                        }
+                    }
+                }
+                viewModel.events.observe(viewLifecycleOwner) { events ->
+                    events.forEach { event ->
+                        val location = event.eventLocation
+                        val latLng = LatLng(location.latitude, location.longitude)
+                        googleMap.addMarker(
+                            MarkerOptions()
+                                .position(latLng)
+                                .title(event.eventName)
+                        )
+                    }
+                }
+            } catch (e: SecurityException) {
+                // Should never happen with permission check, but safe to log
+                e.printStackTrace()
             }
         } else {
             requestUserPermissions()

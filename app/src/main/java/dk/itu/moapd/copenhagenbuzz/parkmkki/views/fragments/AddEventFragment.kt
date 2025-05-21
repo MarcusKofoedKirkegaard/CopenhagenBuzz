@@ -13,6 +13,7 @@ import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -118,6 +119,7 @@ class AddEventFragment : Fragment() {
 
     private fun pickImageFromGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        Log.i("Pick", intent.toString())
         startActivityForResult(intent, REQUEST_IMAGE_PICK)
     }
 
@@ -125,6 +127,7 @@ class AddEventFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if ((requestCode == REQUEST_IMAGE_CAPTURE || requestCode == REQUEST_IMAGE_PICK) && resultCode == Activity.RESULT_OK) {
+            Log.i("Checking pick", "Do i get called for pick")
             val imageBitmap = data?.extras?.get("data") as? Bitmap
             imageBitmap?.let {
                 val baos = ByteArrayOutputStream()
