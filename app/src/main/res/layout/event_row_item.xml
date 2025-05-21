@@ -119,8 +119,9 @@
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/baseline_add_24"
                     tools:ignore="ContentDescription" />
+
                 <ImageButton
-                    android:id="@+id/unlike_button"
+                    android:id="@+id/unfavorite_button"
                     android:layout_width="@dimen/event_card_like_unlike_button_width"
                     android:layout_height="@dimen/event_card_like_unlike_button_height"
                     android:background="?attr/selectableItemBackgroundBorderless"
@@ -128,8 +129,9 @@
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/baseline_favorite_24"
                     tools:ignore="ContentDescription" />
+
                 <ImageButton
-                    android:id="@+id/like_button"
+                    android:id="@+id/favorite_button"
                     android:layout_width="@dimen/event_card_like_unlike_button_width"
                     android:layout_height="@dimen/event_card_like_unlike_button_height"
                     android:background="?attr/selectableItemBackgroundBorderless"

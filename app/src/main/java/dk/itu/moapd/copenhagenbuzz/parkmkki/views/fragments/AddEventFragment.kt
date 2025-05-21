@@ -1,257 +1,224 @@
 package dk.itu.moapd.copenhagenbuzz.parkmkki.views.fragments
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Address
+import android.graphics.Bitmap
 import android.location.Geocoder
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.database
-import com.google.firebase.storage.storage
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.FragmentAddEventBinding
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.EventLocation
-import java.time.format.DateTimeFormatter
+import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayOutputStream
 import java.util.Locale
-import java.util.UUID
 
-
-/**
- * Fragment for adding a new event.
- *
- * This fragment allows users to input event details and save them using the `EventController`.
- */
 class AddEventFragment : Fragment() {
 
-    /**
-     * View binding for accessing UI elements in `fragment_add_event.xml`.
-     */
     private var _binding: FragmentAddEventBinding? = null
+    private val binding get() = requireNotNull(_binding) { "Cannot access binding because it is null. Is the view visible?" }
 
-    /**
-     * Non-nullable binding property to ensure safe access.
-     */
-    private val binding get() = requireNotNull(_binding) {
-        "Cannot access binding because it is null. Is the view visible?"
-    }
+    private val viewModel: DataViewModel by activityViewModels()
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    /**
-     * Date formatter for parsing user input dates.
-     */
-    private val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    private var photoByteArray: ByteArray = ByteArray(0)
+    private var imagePath = ""
 
-    private var selectedImageUri: Uri? = null
-
-
-    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {
-            selectedImageUri = it
-            showImagePreview(it)
-        }
-    }
-
-    // Capture image using camera
-    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        if (success) {
-            selectedImageUri?.let {
-                showImagePreview(it)
-            }
-        }
-    }
-
-    // Create temporary URI to store the captured image
-    private fun createImageUri(): Uri? {
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, "IMG_${System.currentTimeMillis()}")
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/EventImages")
-        }
-        return requireContext().contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-    }
-
-    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-        val cameraGranted = permissions[Manifest.permission.CAMERA] == true
-        val storageGranted = permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] == true
-
-        if (cameraGranted && storageGranted) {
-            // Permissions granted, proceed to take photo or pick image
-        } else {
-            // Permissions not granted, inform user they need to grant permissions
-            Toast.makeText(
-                context,
-                "Permissions are required to use the camera.",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
-
-    private fun checkAndRequestPermissions() {
-        val permissions = arrayOf(
-            Manifest.permission.CAMERA
-        )
-
-        val permissionsNeeded = permissions.filter { ContextCompat.checkSelfPermission(
-            requireContext(),
-            it
-        ) != PackageManager.PERMISSION_GRANTED
-        }
-
-        if (permissionsNeeded.isEmpty()) {
-            val uri = createImageUri()
-            selectedImageUri = uri
-            takePictureLauncher.launch(uri)
-        } else {
-            requestPermissionLauncher.launch(permissionsNeeded.toTypedArray())
-        }
-    }
-
-
-    /**
-     * Inflates the fragment's layout and initializes view binding.
-     *
-     * @param inflater LayoutInflater for inflating views.
-     * @param container Parent container, or `null` if none.
-     * @param savedInstanceState Previously saved instance state.
-     * @return The root view of the fragment.
-     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentAddEventBinding.inflate(inflater, container, false)
+    ): View = FragmentAddEventBinding.inflate(inflater, container, false).also {
+        _binding = it
+    }.root
 
-        return binding.root
-    }
-
-    /**
-     * Called after the view has been created.
-     *
-     * Sets up the UI, including handling button clicks for adding an event.
-     *
-     * @param view The fragment's root view.
-     * @param savedInstanceState Saved instance state, if any.
-     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val auth = FirebaseAuth.getInstance()
-        val database = Firebase.database("https://moapd-2025-793fd-default-rtdb.europe-west1.firebasedatabase.app/").reference
-
-        // Set up the floating action button click listener for adding an event
-        binding.fabAddEvent.setOnClickListener {
-            if (validateInputs()) {
-                try {
-                    // Update event using the EventController
-                    auth.currentUser?.let { user ->
-                        val event = Event(
-                            user.uid,
-                            binding.editTextEventName.text.toString().trim(),
-                            EventLocation(
-                                0.0,
-                                0.0,
-                                binding.editTextEventLocation.text.toString().trim()
-                            ),
-                            binding.editTextEventDate.text.toString().trim().toLong(),
-                            binding.editTextEventType.text.toString().trim(),
-                            binding.editTextEventLocation.text.toString().trim(),
-                            selectedImageUri.toString(),
-                            false,
-                            0
-                        )
-
-                        database.child("events")
-                            .child(user.uid)
-                            .push()
-                            .key?.let { uid ->
-                                database.child("events")
-                                    .child(user.uid)
-                                    .child(uid)
-                                    .setValue(event)
-                            }
-
-                        val filename = UUID.randomUUID().toString()
-                        val imageRef = Firebase.storage("gs://moapd-2025-793fd.firebasestorage.app").reference
-                            .child("images/$user.uid/$filename")
-                        selectedImageUri?.let { img -> imageRef.putFile(img) }
-                    }
-
-                    // Show confirmation message
-                } catch (e: Exception) {
-                    Log.e("AddEventFragment", "Could not parse the date! Error: ${e.message}")
-                }
-            }
-        }
-
-        binding.buttonAddImage.setOnClickListener {
-            pickImageLauncher.launch("image/*")
-        }
-
-        binding.buttonTakePicture.setOnClickListener {
-            checkAndRequestPermissions()
-        }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        setupClickListeners()
     }
 
-    /**
-     * Validates user input fields to ensure they are not empty.
-     *
-     * @return `true` if all input fields are valid, otherwise `false`.
-     */
-    private fun validateInputs(): Boolean {
-        return !binding.editTextEventName.text.isNullOrEmpty() &&
-                !binding.editTextEventLocation.text.isNullOrEmpty() &&
-                !binding.editTextEventDate.text.isNullOrEmpty() &&
-                !binding.editTextEventType.text.isNullOrEmpty()
-    }
-
-    /**
-     * Displays a confirmation message when an event is successfully added.
-     */
-    private fun showMessage() {
-        Snackbar.make(binding.root, "Event added", Snackbar.LENGTH_LONG).show()
-    }
-
-    /**
-     * Cleans up the binding when the view is destroyed.
-     */
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
-    private fun Address.toAddressString(): String =
-        with(StringBuilder()) {
-            append(getAddressLine(0)).append("\n")
-            append(countryName)
-            toString()
+    private fun setupClickListeners() {
+        binding.fabAddEvent.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                onAddEvent()
+            }
         }
 
-    private fun setAddress(latitude: Double, longitude: Double) {
-        val geocoder = Geocoder(requireContext(), Locale.getDefault())
-        val addresses = if (Build.VERSION.SDK_INT >= 33)
-            geocoder.getFromLocation(latitude, longitude, 1)
-        else
-            geocoder.getFromLocation(latitude, longitude, 1)
-        addresses?.firstOrNull()?.toAddressString()?.let { address ->
-            binding.editTextEventLocation.setText(address)
+        binding.buttonTakePicture.setOnClickListener {
+            startTakeImageIntent()
+        }
+
+        binding.buttonAddImage.setOnClickListener {
+            pickImageFromGallery()
         }
     }
 
-    private fun showImagePreview(uri: Uri) {
-        binding.imagePreview.setImageURI(uri)
-        binding.imagePreview.visibility = View.VISIBLE
+    private fun startTakeImageIntent() {
+        if (checkPermissionsCamera()) {
+            if (isCameraPermissionEnabled()) {
+                val takeImageIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                try {
+                    startActivityForResult(takeImageIntent, REQUEST_IMAGE_CAPTURE)
+                } catch (e: ActivityNotFoundException) {
+                    showToast("Error: could not get image")
+                }
+            }
+        } else {
+            requestCameraPermission()
+        }
+    }
+
+    private fun isCameraPermissionEnabled(): Boolean {
+        val permission = Manifest.permission.CAMERA
+        val result = ContextCompat.checkSelfPermission(requireContext(), permission)
+        return result == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestCameraPermission() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(Manifest.permission.CAMERA),
+            REQUEST_IMAGE_CAPTURE
+        )
+    }
+
+    private fun checkPermissionsCamera(): Boolean {
+        return ActivityCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, REQUEST_IMAGE_PICK)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if ((requestCode == REQUEST_IMAGE_CAPTURE || requestCode == REQUEST_IMAGE_PICK) && resultCode == Activity.RESULT_OK) {
+            val imageBitmap = data?.extras?.get("data") as? Bitmap
+            imageBitmap?.let {
+                val baos = ByteArrayOutputStream()
+                it.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                photoByteArray = baos.toByteArray()
+                binding.imagePreview.setImageBitmap(it)
+                binding.imagePreview.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private suspend fun onAddEvent() {
+        if (!validateInputs()) {
+            showToast("Please fill all fields and add an image")
+            return
+        }
+
+        val event = createEvent() ?: run {
+            showToast("Cannot create event; User must log in")
+            return
+        }
+
+        viewModel.addEvent(event, photoByteArray)
+        showToast("Successfully added event ${event.eventName}!")
+        clearTextFields()
+    }
+
+    private fun validateInputs(): Boolean {
+        return !binding.editTextEventName.text.isNullOrEmpty() &&
+                !binding.editTextEventType.text.isNullOrEmpty()// &&
+                //photoByteArray.isNotEmpty()
+    }
+
+    private fun showToast(msg: String) {
+        Snackbar.make(binding.root, msg, Snackbar.LENGTH_LONG).show()
+    }
+
+    private suspend fun createEvent(): Event? {
+        val user = viewModel.getCurrentUser() ?: return null
+        val name = binding.editTextEventName.text.toString()
+        val type = binding.editTextEventType.text.toString()
+        val date = binding.editTextEventDate.text.toString()
+        val description = binding.editTextEventDescription.text.toString()
+        val location = getEventLocation()
+        return Event(user.uid, name, location, date.toLong(), type, description, imagePath, )
+    }
+
+    @SuppressLint("MissingPermission")
+    private suspend fun getEventLocation(): EventLocation {
+        val geo = Geocoder(requireContext(), Locale.getDefault())
+        val address = binding.editTextEventLocation.text.toString()
+
+        if (address.isNotBlank()) {
+            geo.getFromLocationName(address, 1)?.firstOrNull()?.let { placemark ->
+                return EventLocation(
+                    placemark.latitude,
+                    placemark.longitude,
+                    address
+                )
+            }
+        }
+
+        val location = fusedLocationClient.lastLocation.await()
+        location?.let {
+            val line = geo.getFromLocation(it.latitude, it.longitude, 1)
+                ?.firstOrNull()
+                ?.getAddressLine(0)
+                .toString()
+                .takeUnless { it.isNullOrBlank() }
+                ?: "Unknown location"
+
+            return EventLocation(
+                it.latitude,
+                it.longitude,
+                line
+            )
+        }
+
+        return EventLocation(55.40, 72.9097, "Default address")
+    }
+
+    private fun clearTextFields() {
+        binding.editTextEventName.text?.clear()
+        binding.editTextEventType.text?.clear()
+        binding.editTextEventLocation.text?.clear()
+        binding.editTextEventDate.text?.clear()
+        binding.imagePreview.setImageBitmap(null)
+        binding.imagePreview.visibility = View.GONE
+        binding.editTextEventDescription.text?.clear()
+        photoByteArray = ByteArray(0)
+    }
+
+    companion object {
+        private const val REQUEST_IMAGE_CAPTURE = 1
+        private const val REQUEST_IMAGE_PICK = 2
     }
 }

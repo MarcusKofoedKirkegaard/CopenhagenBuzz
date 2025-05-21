@@ -24,8 +24,7 @@ data class Event(
     val eventDate: Long=0,
     val eventType: String="",
     val eventDescription: String="",
-    val eventImagePath: String="",
-    var isFavorite: Boolean = false,
+    var eventImagePath: String="",
     var eventThumbsUp: Int=0
 ) {
 

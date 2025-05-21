@@ -7,13 +7,14 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.FavoriteRowItemBinding
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
+import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
 
 /**
  * Adapter for the favorites list using FirebaseRecyclerAdapter and RecyclerView.
  *
  * @constructor Accepts FirebaseRecyclerOptions to provide real-time updates.
  */
-class FavoriteAdapter(options: FirebaseRecyclerOptions<Event>) :
+class FavoriteAdapter(private val dataViewModel: DataViewModel, options: FirebaseRecyclerOptions<Event>) :
     FirebaseRecyclerAdapter<Event, FavoriteAdapter.ViewHolder>(options) {
 
     class ViewHolder(private val binding: FavoriteRowItemBinding) :
@@ -26,6 +27,7 @@ class FavoriteAdapter(options: FirebaseRecyclerOptions<Event>) :
             with(binding) {
                 textFieldFavoriteName.text = event.eventName
                 textFieldFavoriteType.text = event.eventType
+
                 // Uncomment if you integrate an image loader like Glide or Picasso:
                 // Glide.with(root).load(event.imageUrl).into(favoriteEventImage)
             }

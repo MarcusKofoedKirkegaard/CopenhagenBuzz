@@ -41,18 +41,23 @@ class TimelineFragment : Fragment() {
 
         listView = view.findViewById(R.id.timeline_list_view)
 
+
         FirebaseAuth.getInstance().currentUser?.let { user ->
             val query = Firebase.database("https://moapd-2025-793fd-default-rtdb.europe-west1.firebasedatabase.app/")
                 .reference.child("events")
 
             val options = FirebaseListOptions.Builder<Event>()
                 .setQuery(query, Event::class.java)
-                .setLayout(R.layout.event_row_item)  // Your row layout
+                .setLayout(R.layout.event_row_item)
                 .setLifecycleOwner(viewLifecycleOwner)
                 .build()
 
             adapter = EventAdapter(viewModel, options)
             listView.adapter = adapter
+        }
+
+        viewModel.favoritedEventKeys.observe(viewLifecycleOwner) {
+            adapter.notifyDataSetChanged()
         }
     }
 }
