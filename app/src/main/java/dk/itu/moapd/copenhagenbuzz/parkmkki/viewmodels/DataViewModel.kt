@@ -1,6 +1,5 @@
 package dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,41 +8,35 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.*
+import io.github.cdimascio.dotenv.dotenv
 
 class DataViewModel : ViewModel() {
 
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val database: DatabaseReference = FirebaseDatabase.getInstance(
-        "https://moapd-2025-793fd-default-rtdb.europe-west1.firebasedatabase.app/"
-    ).reference
+    private val DATABASE_URL: String = dotenv {
+        directory = "/assets"
+        filename = "env"
+    }["DATABASE_URL"]
 
+
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    val database: DatabaseReference = FirebaseDatabase.getInstance(DATABASE_URL).reference
     private val storage = FirebaseStorage.getInstance().reference.child("event_images")
 
     private val _events = MutableLiveData<List<Event>>()
     val events: LiveData<List<Event>> get() = _events
 
+    private val _favoritedEventKeys = MutableLiveData<Set<String>>(setOf())
+    val favoritedEventKeys: LiveData<Set<String>> = _favoritedEventKeys
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
-    private val _favoritedEventKeys = MutableLiveData<Set<String>>(setOf())
-    val favoritedEventKeys: LiveData<Set<String>> = _favoritedEventKeys
+    fun getCurrentUser() = auth.currentUser
 
-    suspend fun refreshFavoritedEvents() {
-        val userId = getCurrentUser()?.uid ?: return
-        val snapshot = database.child("favorites").child(userId).get().await()
-        val keys = snapshot.children.mapNotNull { it.key }.toSet()
-        _favoritedEventKeys.postValue(keys)
-    }
 
-    fun isEventFavoritedLocally(eventKey: String): Boolean {
-        return favoritedEventKeys.value?.contains(eventKey) ?: false
-    }
 
     private val eventListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
@@ -66,12 +59,21 @@ class DataViewModel : ViewModel() {
         database.child("events").addValueEventListener(eventListener)
     }
 
+    suspend fun refreshFavoritedEvents() {
+        val userId = getCurrentUser()?.uid ?: return
+        val snapshot = database.child("favorites").child(userId).get().await()
+        val keys = snapshot.children.mapNotNull { it.key }.toSet()
+        _favoritedEventKeys.postValue(keys)
+    }
+
+    fun isEventFavoritedLocally(eventKey: String): Boolean {
+        return favoritedEventKeys.value?.contains(eventKey) ?: false
+    }
+
     override fun onCleared() {
         super.onCleared()
         database.child("events").removeEventListener(eventListener)
     }
-
-    fun getCurrentUser() = auth.currentUser
 
     fun addEvent(event: Event, imageByteArray: ByteArray) {
         viewModelScope.launch {
@@ -84,6 +86,13 @@ class DataViewModel : ViewModel() {
                 _errorMessage.postValue("Failed to add event: ${e.message}")
             }
         }
+    }
+
+    private suspend fun uploadImage(key: String, data: ByteArray): String {
+        val imageName = "${System.currentTimeMillis()}.jpg"
+        val ref = storage.child(key).child(imageName)
+        ref.putBytes(data).await()
+        return ref.downloadUrl.await().toString()
     }
 
     fun favoriteEvent(eventKey: String) {
@@ -118,26 +127,4 @@ class DataViewModel : ViewModel() {
             }
         }
     }
-
-    fun isEventFavorited(eventKey: String, callback: (Boolean) -> Unit) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return callback(false)
-
-        database.child("favorites").child(userId).child(eventKey).get()
-            .addOnSuccessListener { snapshot ->
-                callback(snapshot.exists())
-            }
-            .addOnFailureListener {
-                _errorMessage.postValue("Error checking favorite: ${it.message}")
-                callback(false)
-            }
-    }
-
-
-    private suspend fun uploadImage(key: String, data: ByteArray): String {
-        val imageName = "${System.currentTimeMillis()}.jpg"
-        val ref = storage.child(key).child(imageName)
-        ref.putBytes(data).await()
-        return ref.downloadUrl.await().toString()
-    }
-
 }

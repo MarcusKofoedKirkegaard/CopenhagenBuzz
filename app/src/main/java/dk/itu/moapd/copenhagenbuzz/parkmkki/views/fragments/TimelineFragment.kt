@@ -43,8 +43,7 @@ class TimelineFragment : Fragment() {
 
 
         FirebaseAuth.getInstance().currentUser?.let { user ->
-            val query = Firebase.database("https://moapd-2025-793fd-default-rtdb.europe-west1.firebasedatabase.app/")
-                .reference.child("events")
+            val query = viewModel.database.child("events").orderByChild("eventDate")
 
             val options = FirebaseListOptions.Builder<Event>()
                 .setQuery(query, Event::class.java)

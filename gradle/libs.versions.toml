@@ -2,6 +2,7 @@
 agp = "8.8.0"
 constraintlayoutCompose = "1.1.0"
 constraintlayoutVersion = "2.2.0"
+dotenvKotlin = "6.4.1"
 firebaseUiStorage = "8.0.0"
 kotlin = "1.9.24"
 coreKtx = "1.10.1"
@@ -33,6 +34,7 @@ androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constr
 androidx-constraintlayout-v220 = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayoutVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+dotenv-kotlin = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "dotenvKotlin" }
 firebase-ui-storage = { module = "com.firebaseui:firebase-ui-storage", version.ref = "firebaseUiStorage" }
 google-firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-ktx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

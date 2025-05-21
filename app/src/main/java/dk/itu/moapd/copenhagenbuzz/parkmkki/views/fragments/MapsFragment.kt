@@ -40,12 +40,12 @@ class MapsFragment : Fragment() {
 
         val itu = LatLng(55.6596, 12.5910)
         googleMap.addMarker(MarkerOptions().position(itu).title("IT University of Copenhagen"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(itu, 15f)) // <- Added zoom
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(itu, 12f))
         googleMap.setPadding(0, 100, 0, 0)
 
         if (checkPermission()) {
             try {
-                googleMap.isMyLocationEnabled = true // ✅ Enable current location marker
+                googleMap.isMyLocationEnabled = true
 
                 val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
@@ -53,8 +53,8 @@ class MapsFragment : Fragment() {
                     fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                         location?.let {
                             val currentLatLng = LatLng(it.latitude, it.longitude)
-                            //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(itu, 5f))
+                            //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(itu, 12f))
                         }
                     }
                 }

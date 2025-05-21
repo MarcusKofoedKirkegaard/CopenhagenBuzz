@@ -5,23 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.google.firebase.Firebase
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.firebase.ui.database.FirebaseListOptions
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.database
-import com.google.firebase.database.values
 import dk.itu.moapd.copenhagenbuzz.parkmkki.R
-import dk.itu.moapd.copenhagenbuzz.parkmkki.adapters.EventAdapter
 import dk.itu.moapd.copenhagenbuzz.parkmkki.adapters.FavoriteAdapter
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
 import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.tasks.await
 
 /**
  * A fragment that displays a timeline of events using a RecyclerView.
@@ -48,12 +40,10 @@ class FavoritesFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         FirebaseAuth.getInstance().currentUser?.let { user ->
-            val favoritesQuery = Firebase.database("https://moapd-2025-793fd-default-rtdb.europe-west1.firebasedatabase.app/")
-                .reference.child("favorites").child(user.uid)
-                .orderByChild("eventDate")
+            val query = viewModel.database.child("favorites").child(user.uid).orderByChild("eventDate")
 
             val options = FirebaseRecyclerOptions.Builder<Event>()
-                .setQuery(favoritesQuery, Event::class.java)
+                .setQuery(query, Event::class.java)
                 .setLifecycleOwner(viewLifecycleOwner)
                 .build()
 
