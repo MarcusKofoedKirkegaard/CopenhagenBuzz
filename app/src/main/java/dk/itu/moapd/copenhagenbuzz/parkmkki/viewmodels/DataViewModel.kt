@@ -1,5 +1,6 @@
 package dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
+import dk.itu.moapd.copenhagenbuzz.parkmkki.utils.AlarmScheduler
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.*
@@ -126,5 +128,13 @@ class DataViewModel : ViewModel() {
                 _errorMessage.postValue("Failed to un-favorite event: ${e.message}")
             }
         }
+    }
+
+    fun scheduleEventAlarm(context: Context, eventKey: String, event: Event) {
+        AlarmScheduler.scheduleAlarm(context, eventKey, event)
+    }
+
+    fun cancelEventAlarm(context: Context, eventKey: String) {
+        AlarmScheduler.cancelAlarm(context, eventKey)
     }
 }

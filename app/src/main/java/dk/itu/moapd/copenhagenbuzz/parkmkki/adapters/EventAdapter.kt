@@ -33,6 +33,7 @@ class EventAdapter(
         val favoriteButton: View = view.findViewById(R.id.favorite_button)
         val unFavoriteButton: View = view.findViewById(R.id.unfavorite_button)
         val image: ImageView = view.findViewById(R.id.event_image)
+        val alarmButton: View = view.findViewById(R.id.alarm_button)
     }
 
     override fun populateView(v: View, model: Event, position: Int) {
@@ -60,6 +61,11 @@ class EventAdapter(
             favoriteButton.visibility = View.GONE
             unFavoriteButton.visibility = View.GONE
             return
+        }
+
+        alarmButton.setOnClickListener {
+            // Schedule the alarm
+            dataViewModel.scheduleEventAlarm(it.context, eventKey, event)
         }
 
         // Observe favorite status live

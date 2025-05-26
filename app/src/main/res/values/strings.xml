@@ -29,4 +29,5 @@
     <string name="takepicture">Take picture</string>
     <string name="reset_drawing">Reset Drawing</string>
     <string name="preview_of_image_to_add">Preview of image to add</string>
+    <string name="set_alarm">Set alarm</string>
 </resources>

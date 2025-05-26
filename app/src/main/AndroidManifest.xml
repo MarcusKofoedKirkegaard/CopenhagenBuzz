@@ -6,6 +6,8 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -31,6 +33,10 @@
             android:exported="false"
             android:theme="@style/Theme.CopenhagenBuzz">
         </activity>
+
+        <receiver
+            android:name=".receivers.EventAlarmReceiver"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
