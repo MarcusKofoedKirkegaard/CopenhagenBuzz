@@ -51,6 +51,7 @@ class EventAdapter(
     }
 
     override fun populateView(v: View, model: Event, position: Int) {
+
         val viewHolder: ViewHolder = v.tag as? ViewHolder ?: ViewHolder(v).also { v.tag = it }
         val eventKey = getRef(position).key
 
@@ -59,6 +60,8 @@ class EventAdapter(
     }
 
     private fun ViewHolder.bind(event: Event, eventKey: String?) {
+        if(eventKey == null) return
+        val isFavorited = dataViewModel.isEventFavoritedLocally(eventKey)
         eventName.text = event.eventName
         eventType.text = event.eventType
         eventLocation.text = event.eventLocation.address
@@ -73,12 +76,6 @@ class EventAdapter(
                 .placeholder(R.drawable.test_image)
                 .error(R.drawable.test_image)
                 .into(image)
-        }
-
-        if (eventKey == null) {
-            favoriteButton.visibility = View.GONE
-            unFavoriteButton.visibility = View.GONE
-            return
         }
 
         val prefs = alarmButton.context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE)
@@ -126,7 +123,6 @@ class EventAdapter(
             bind(event, eventKey)
         }
 
-        val isFavorited = dataViewModel.isEventFavoritedLocally(eventKey)
 
         favoriteButton.visibility = if (isFavorited) View.GONE else View.VISIBLE
         unFavoriteButton.visibility = if (isFavorited) View.VISIBLE else View.GONE

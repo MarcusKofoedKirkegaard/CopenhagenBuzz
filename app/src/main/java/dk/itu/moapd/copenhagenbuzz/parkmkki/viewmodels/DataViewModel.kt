@@ -59,6 +59,9 @@ class DataViewModel : ViewModel() {
 
     init {
         database.child("events").addValueEventListener(eventListener)
+        viewModelScope.launch {
+            refreshFavoritedEvents()
+        }
     }
 
     suspend fun refreshFavoritedEvents() {
