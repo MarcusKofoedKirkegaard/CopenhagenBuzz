@@ -132,9 +132,13 @@ class DataViewModel : ViewModel() {
 
     fun scheduleEventAlarm(context: Context, eventKey: String, event: Event) {
         AlarmScheduler.scheduleAlarm(context, eventKey, event)
+        val prefs = context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE)
+        prefs.edit().putBoolean("alarm_set_$eventKey", true).apply()
     }
 
     fun cancelEventAlarm(context: Context, eventKey: String) {
         AlarmScheduler.cancelAlarm(context, eventKey)
+        val prefs = context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE)
+        prefs.edit().putBoolean("alarm_set_$eventKey", false).apply()
     }
 }

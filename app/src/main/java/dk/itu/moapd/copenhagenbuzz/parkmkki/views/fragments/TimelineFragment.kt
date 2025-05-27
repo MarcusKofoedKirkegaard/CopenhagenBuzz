@@ -1,6 +1,8 @@
 package dk.itu.moapd.copenhagenbuzz.parkmkki.views.fragments
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -55,8 +57,22 @@ class TimelineFragment : Fragment() {
             listView.adapter = adapter
         }
 
+
         viewModel.favoritedEventKeys.observe(viewLifecycleOwner) {
             adapter.notifyDataSetChanged()
         }
+        handler.post(timerRunnable)
+    }
+    private val handler = Handler(Looper.getMainLooper())
+    private val timerRunnable = object : Runnable {
+        override fun run() {
+            adapter.notifyDataSetChanged() // triggers bind() on visible items
+            handler.postDelayed(this, 1000) // repeat every second
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(timerRunnable)
     }
 }

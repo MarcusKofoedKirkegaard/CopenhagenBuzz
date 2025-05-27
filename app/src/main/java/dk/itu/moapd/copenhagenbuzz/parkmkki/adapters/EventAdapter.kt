@@ -1,5 +1,6 @@
 package dk.itu.moapd.copenhagenbuzz.parkmkki.adapters
 
+import android.content.Context
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -63,8 +64,37 @@ class EventAdapter(
             return
         }
 
+        val prefs = alarmButton.context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE)
+        val isAlarmSet = prefs.getBoolean("alarm_set_$eventKey", false)
+
+        val millisUntilEvent = event.eventDate - System.currentTimeMillis()
+        if (millisUntilEvent > 0) {
+            if (isAlarmSet) {
+
+                val seconds = (millisUntilEvent / 1000) % 60
+                val minutes = (millisUntilEvent / (1000 * 60)) % 60
+                val hours = (millisUntilEvent / (1000 * 60 * 60))
+
+                (alarmButton as? TextView)?.text = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                alarmButton.isEnabled = true
+            } else {
+                (alarmButton as? TextView)?.text = "Set Alarm"
+                alarmButton.isEnabled = true
+            }
+        } else {
+            (alarmButton as? TextView)?.text = "Event Started"
+            alarmButton.isEnabled = false
+        }
+
+
+
         alarmButton.setOnClickListener {
-            dataViewModel.scheduleEventAlarm(it.context, eventKey, event)
+            if (isAlarmSet) {
+                dataViewModel.cancelEventAlarm(it.context, eventKey)
+            } else {
+                dataViewModel.scheduleEventAlarm(it.context, eventKey, event)
+            }
+
         }
 
         // Observe favorite status live
@@ -72,8 +102,6 @@ class EventAdapter(
 
         favoriteButton.visibility = if (isFavorited) View.GONE else View.VISIBLE
         unFavoriteButton.visibility = if (isFavorited) View.VISIBLE else View.GONE
-
-
 
         favoriteButton.setOnClickListener {
             eventKey.let {
