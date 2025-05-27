@@ -62,6 +62,25 @@
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="?android:attr/textColorSecondary" />
             </LinearLayout>
+            <ImageButton
+                android:id="@+id/unfavorite_button"
+                android:layout_width="@dimen/event_card_like_unlike_button_width"
+                android:layout_height="@dimen/event_card_like_unlike_button_height"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/event_card_like_unlike_button_padding"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/baseline_favorite_24"
+                tools:ignore="ContentDescription" />
+
+            <ImageButton
+                android:id="@+id/favorite_button"
+                android:layout_width="@dimen/event_card_like_unlike_button_width"
+                android:layout_height="@dimen/event_card_like_unlike_button_height"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/event_card_like_unlike_button_padding"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/baseline_favorite_border_24"
+                tools:ignore="ContentDescription" />
         </LinearLayout>
             <!-- Media -->
             <ImageView
@@ -104,59 +123,6 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/event_card_action_buttons_margin"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/follow_button"
-                    android:layout_width="@dimen/event_card_like_unlike_button_width"
-                    android:layout_height="@dimen/event_card_like_unlike_button_height"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="@dimen/event_card_like_unlike_button_padding"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/baseline_add_24"
-                    tools:ignore="ContentDescription" />
-
-                <ImageButton
-                    android:id="@+id/unfavorite_button"
-                    android:layout_width="@dimen/event_card_like_unlike_button_width"
-                    android:layout_height="@dimen/event_card_like_unlike_button_height"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="@dimen/event_card_like_unlike_button_padding"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/baseline_favorite_24"
-                    tools:ignore="ContentDescription" />
-
-                <ImageButton
-                    android:id="@+id/favorite_button"
-                    android:layout_width="@dimen/event_card_like_unlike_button_width"
-                    android:layout_height="@dimen/event_card_like_unlike_button_height"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="@dimen/event_card_like_unlike_button_padding"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/baseline_favorite_border_24"
-                    tools:ignore="ContentDescription" />
-
-                <ImageButton
-                    android:id="@+id/thumbsup_button"
-                    android:layout_width="@dimen/event_card_like_unlike_button_width"
-                    android:layout_height="@dimen/event_card_like_unlike_button_height"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="@dimen/event_card_like_unlike_button_padding"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/baseline_thumb_up_24"
-                    app:layout_constraintTop_toBottomOf="@+id/like_button"
-                    tools:ignore="ContentDescription" />
-                <TextView
-                    android:id="@+id/thumbsup_counter"
-                    android:layout_width="@dimen/event_card_like_unlike_button_width"
-                    android:layout_height="@dimen/event_card_like_unlike_button_height"
-                    android:text="0"
-                    android:textAppearance="?attr/textAppearanceTitleMedium" />
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"

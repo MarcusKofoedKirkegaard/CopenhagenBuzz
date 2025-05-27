@@ -60,6 +60,16 @@
                     android:text="@string/event_type"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="?android:attr/textColorSecondary" />
+
+                <ImageButton
+                    android:id="@+id/unfavorite_button"
+                    android:layout_width="@dimen/event_card_like_unlike_button_width"
+                    android:layout_height="@dimen/event_card_like_unlike_button_height"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="@dimen/event_card_like_unlike_button_padding"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/baseline_favorite_24"
+                    tools:ignore="ContentDescription" />
             </LinearLayout>
 
             <ImageView

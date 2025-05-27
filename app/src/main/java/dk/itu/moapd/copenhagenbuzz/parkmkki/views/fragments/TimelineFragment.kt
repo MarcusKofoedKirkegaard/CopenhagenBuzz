@@ -1,8 +1,6 @@
 package dk.itu.moapd.copenhagenbuzz.parkmkki.views.fragments
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +8,7 @@ import android.widget.ListView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.firebase.ui.database.FirebaseListOptions
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.database
 import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 import dk.itu.moapd.copenhagenbuzz.parkmkki.adapters.EventAdapter
 import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
@@ -43,7 +39,6 @@ class TimelineFragment : Fragment() {
 
         listView = view.findViewById(R.id.timeline_list_view)
 
-
         FirebaseAuth.getInstance().currentUser?.let { user ->
             val query = viewModel.database.child("events").orderByChild("eventDate")
 
@@ -57,22 +52,8 @@ class TimelineFragment : Fragment() {
             listView.adapter = adapter
         }
 
-
         viewModel.favoritedEventKeys.observe(viewLifecycleOwner) {
             adapter.notifyDataSetChanged()
         }
-        handler.post(timerRunnable)
-    }
-    private val handler = Handler(Looper.getMainLooper())
-    private val timerRunnable = object : Runnable {
-        override fun run() {
-            adapter.notifyDataSetChanged() // triggers bind() on visible items
-            handler.postDelayed(this, 1000) // repeat every second
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        handler.removeCallbacks(timerRunnable)
     }
 }

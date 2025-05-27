@@ -1,6 +1,7 @@
 package dk.itu.moapd.copenhagenbuzz.parkmkki.adapters
 
 import android.content.Context
+import android.os.CountDownTimer
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -36,12 +37,18 @@ class EventAdapter(
         val unFavoriteButton: View = view.findViewById(R.id.unfavorite_button)
         val image: ImageView = view.findViewById(R.id.event_image)
         val alarmButton: View = view.findViewById(R.id.alarm_button)
+        var countdownTimer: CountDownTimer? = null
+
+        fun clearTimer() {
+            countdownTimer?.cancel()
+        }
     }
 
     override fun populateView(v: View, model: Event, position: Int) {
-        val viewHolder = ViewHolder(v)
+        val viewHolder: ViewHolder = v.tag as? ViewHolder ?: ViewHolder(v).also { v.tag = it }
         val eventKey = getRef(position).key
 
+        viewHolder.clearTimer()
         viewHolder.bind(model, eventKey)
     }
 
@@ -53,11 +60,14 @@ class EventAdapter(
         eventDate.text = sdf.format(Date(event.eventDate))
         eventDescription.text = event.eventDescription
 
-        Glide.with(image.context)
-            .load(event.eventImagePath)
-            .placeholder(R.drawable.test_image)
-            .error(R.drawable.test_image)
-            .into(image)
+        if (image.tag != event.eventImagePath) {
+            image.tag = event.eventImagePath
+            Glide.with(image.context)
+                .load(event.eventImagePath)
+                .placeholder(R.drawable.test_image)
+                .error(R.drawable.test_image)
+                .into(image)
+        }
 
         if (eventKey == null) {
             favoriteButton.visibility = View.GONE
@@ -71,13 +81,22 @@ class EventAdapter(
         val millisUntilEvent = event.eventDate - System.currentTimeMillis()
         if (millisUntilEvent > 0) {
             if (isAlarmSet) {
+                countdownTimer = object : CountDownTimer(millisUntilEvent, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
+                        val seconds = (millisUntilFinished / 1000) % 60
+                        val minutes = (millisUntilFinished / (1000 * 60)) % 60
+                        val hours = (millisUntilFinished / (1000 * 60 * 60))
 
-                val seconds = (millisUntilEvent / 1000) % 60
-                val minutes = (millisUntilEvent / (1000 * 60)) % 60
-                val hours = (millisUntilEvent / (1000 * 60 * 60))
+                        (alarmButton as? TextView)?.text =
+                            String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                        alarmButton.isEnabled = true
+                    }
 
-                (alarmButton as? TextView)?.text = String.format("%02d:%02d:%02d", hours, minutes, seconds)
-                alarmButton.isEnabled = true
+                    override fun onFinish() {
+                        (alarmButton as? TextView)?.text = "Event Started"
+                        alarmButton.isEnabled = false
+                    }
+                }.start()
             } else {
                 (alarmButton as? TextView)?.text = "Set Alarm"
                 alarmButton.isEnabled = true
@@ -88,12 +107,17 @@ class EventAdapter(
         }
 
         alarmButton.setOnClickListener {
-            if (isAlarmSet) {
-                dataViewModel.cancelEventAlarm(it.context, eventKey)
+            val context = it.context
+            val prefs = context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE)
+
+            if (prefs.getBoolean("alarm_set_$eventKey", false)) {
+                clearTimer()
+                dataViewModel.cancelEventAlarm(context, eventKey)
             } else {
-                dataViewModel.scheduleEventAlarm(it.context, eventKey, event)
+                dataViewModel.scheduleEventAlarm(context, eventKey, event)
             }
 
+            bind(event, eventKey)
         }
 
         val isFavorited = dataViewModel.isEventFavoritedLocally(eventKey)
@@ -112,8 +136,8 @@ class EventAdapter(
                 dataViewModel.unFavoriteEvent(it)
             }
         }
-    }
 
+    }
 
     override fun getItem(position: Int): Event {
         return super.getItem(count - position - 1)

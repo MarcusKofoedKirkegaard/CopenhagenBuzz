@@ -1,6 +1,7 @@
 package dk.itu.moapd.copenhagenbuzz.parkmkki.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -25,15 +26,25 @@ class FavoriteAdapter(private val dataViewModel: DataViewModel, options: Firebas
         /**
          * Binds an [Event] to the view using ViewBinding.
          */
-        fun bind(event: Event) {
+        fun bind(event: Event, eventKey: String?, dataViewModel: DataViewModel ) {
             with(binding) {
                 textFieldFavoriteName.text = event.eventName
                 textFieldFavoriteType.text = event.eventType
+
                 Glide.with(favoriteEventImage.context)
                     .load(event.eventImagePath)
                     .placeholder(R.drawable.test_image)
                     .error(R.drawable.test_image)
                     .into(favoriteEventImage)
+
+                if (eventKey == null) {
+                    unfavoriteButton.visibility = View.GONE
+                    return
+                }
+
+                unfavoriteButton.setOnClickListener {
+                    dataViewModel.unFavoriteEvent(eventKey)
+                }
             }
         }
     }
@@ -44,6 +55,7 @@ class FavoriteAdapter(private val dataViewModel: DataViewModel, options: Firebas
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, model: Event) {
-        holder.bind(model)
+        val eventKey = getRef(position).key
+        holder.bind(model, eventKey, dataViewModel)
     }
 }
