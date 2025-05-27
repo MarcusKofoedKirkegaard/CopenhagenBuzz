@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import dk.itu.moapd.copenhagenbuzz.parkmkki.receivers.EventAlarmReceiver
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
 
@@ -36,7 +37,7 @@ object AlarmScheduler {
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-
+        Log.i("Alarm", event.eventDate.toString())
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             event.eventDate,

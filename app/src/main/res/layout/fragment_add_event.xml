@@ -80,8 +80,7 @@
             android:layout_height="wrap_content"
             android:autofillHints="date"
             android:hint="@string/event_date"
-            android:inputType="date"
-            android:maxLength="10" />
+            android:inputType="datetime" />
 
 
     </com.google.android.material.textfield.TextInputLayout>

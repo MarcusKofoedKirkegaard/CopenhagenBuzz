@@ -7,10 +7,14 @@
 package dk.itu.moapd.copenhagenbuzz.parkmkki.views.activities
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -19,6 +23,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.ActivityMainBinding
 import dk.itu.moapd.copenhagenbuzz.parkmkki.R
+import android.util.Log
 
 /**
  * MainActivity serves as the entry point of the application and manages navigation,
@@ -75,6 +80,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         auth = FirebaseAuth.getInstance()
+        checkAndRequestNotificationPermission()
 
     }
 
@@ -124,4 +130,37 @@ class MainActivity : AppCompatActivity() {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }.let(::startActivity)
     }
+
+    private val REQUEST_CODE_POST_NOTIFICATIONS = 1001
+
+    private fun checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    REQUEST_CODE_POST_NOTIFICATIONS
+                )
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                Log.i("MainActivity", "Notification permission granted")
+            } else {
+                Log.w("MainActivity", "Notification permission denied")
+            }
+        }
+    }
 }
+
+

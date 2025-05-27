@@ -3,6 +3,8 @@ package dk.itu.moapd.copenhagenbuzz.parkmkki.views.fragments
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -57,7 +59,48 @@ class AddEventFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         setupClickListeners()
+        binding.editTextEventDate.setOnClickListener {
+            showDateTimePicker()
+        }
     }
+    private fun showDateTimePicker() {
+        val calendar = Calendar.getInstance()
+
+        val timePicker = {
+            TimePickerDialog(
+                requireContext(),
+                { _, hour, minute ->
+                    calendar.set(Calendar.HOUR_OF_DAY, hour)
+                    calendar.set(Calendar.MINUTE, minute)
+
+                    calendar.set(Calendar.SECOND, 0)
+                    calendar.set(Calendar.MILLISECOND, 0)
+
+                    val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                    val formatted = sdf.format(calendar.time)
+                    binding.editTextEventDate.setText(formatted)
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+            ).show()
+        }
+
+        DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                calendar.set(Calendar.YEAR, year)
+                calendar.set(Calendar.MONTH, month)
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                timePicker()
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -96,16 +139,21 @@ class AddEventFragment : Fragment() {
     private fun validateInputs(): Boolean {
         val name = binding.editTextEventName.text.toString().trim()
         val type = binding.editTextEventType.text.toString().trim()
-        val dateStr = binding.editTextEventDate.text.toString().trim()
+        val dateTimeStr = binding.editTextEventDate.text.toString().trim()
         val location = binding.editTextEventLocation.text.toString().trim()
 
-        if (name.isEmpty() || type.isEmpty() || dateStr.isEmpty() || location.isEmpty()) {
+        if (name.isEmpty() || type.isEmpty() || dateTimeStr.isEmpty() || location.isEmpty()) {
             showToast("All fields are required.")
             return false
         }
 
-        if (!isValidDate(dateStr)) {
-            showToast("Date must be in dd/MM/yyyy format.")
+        if (dateTimeStr.isEmpty()) {
+            showToast("Date and time are required.")
+            return false
+        }
+
+        if (!isValidDateTime(dateTimeStr)) {
+            showToast("Invalid format. Use dd/MM/yyyy HH:mm.")
             return false
         }
 
@@ -117,11 +165,11 @@ class AddEventFragment : Fragment() {
         return true
     }
 
-    private fun isValidDate(dateStr: String): Boolean {
+    private fun isValidDateTime(dateTimeStr: String): Boolean {
         return try {
-            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
             sdf.isLenient = false
-            sdf.parse(dateStr)
+            sdf.parse(dateTimeStr)
             true
         } catch (e: ParseException) {
             false
@@ -148,10 +196,10 @@ class AddEventFragment : Fragment() {
 
         val name = binding.editTextEventName.text.toString().trim()
         val type = binding.editTextEventType.text.toString().trim()
-        val dateStr = binding.editTextEventDate.text.toString().trim()
+        val dateTimeStr = binding.editTextEventDate.text.toString().trim()
         val description = binding.editTextEventDescription.text.toString().trim()
-        val timestamp = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(dateStr)?.time
-            ?: return null
+        val timestamp = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+            .parse(dateTimeStr)?.time ?: return null
 
         val location = getEventLocation()
 

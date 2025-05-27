@@ -47,7 +47,7 @@ class EventAdapter(
         eventName.text = event.eventName
         eventType.text = event.eventType
         eventLocation.text = event.eventLocation.address
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         eventDate.text = sdf.format(Date(event.eventDate))
         eventDescription.text = event.eventDescription
 
@@ -64,7 +64,6 @@ class EventAdapter(
         }
 
         alarmButton.setOnClickListener {
-            // Schedule the alarm
             dataViewModel.scheduleEventAlarm(it.context, eventKey, event)
         }
 
