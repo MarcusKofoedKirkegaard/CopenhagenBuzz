@@ -86,8 +86,6 @@ class EventAdapter(
             alarmButton.isEnabled = false
         }
 
-
-
         alarmButton.setOnClickListener {
             if (isAlarmSet) {
                 dataViewModel.cancelEventAlarm(it.context, eventKey)
@@ -97,7 +95,6 @@ class EventAdapter(
 
         }
 
-        // Observe favorite status live
         val isFavorited = dataViewModel.isEventFavoritedLocally(eventKey)
 
         favoriteButton.visibility = if (isFavorited) View.GONE else View.VISIBLE

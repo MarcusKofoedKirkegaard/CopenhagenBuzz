@@ -19,6 +19,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -59,11 +60,13 @@ class AddEventFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         setupClickListeners()
+        binding.editTextEventDate.isEnabled = false
         binding.editTextEventDate.setOnClickListener {
             showDateTimePicker()
         }
     }
     private fun showDateTimePicker() {
+        val now = Calendar.getInstance()
         val calendar = Calendar.getInstance()
 
         val timePicker = {
@@ -72,33 +75,39 @@ class AddEventFragment : Fragment() {
                 { _, hour, minute ->
                     calendar.set(Calendar.HOUR_OF_DAY, hour)
                     calendar.set(Calendar.MINUTE, minute)
-
                     calendar.set(Calendar.SECOND, 0)
                     calendar.set(Calendar.MILLISECOND, 0)
+
+                    if (calendar.timeInMillis < now.timeInMillis) {
+                        Toast.makeText(requireContext(), "Please select a future time", Toast.LENGTH_SHORT).show()
+                        return@TimePickerDialog
+                    }
 
                     val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
                     val formatted = sdf.format(calendar.time)
                     binding.editTextEventDate.setText(formatted)
                 },
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE),
+                now.get(Calendar.HOUR_OF_DAY),
+                now.get(Calendar.MINUTE),
                 true
             ).show()
         }
 
-        DatePickerDialog(
+        val datePickerDialog = DatePickerDialog(
             requireContext(),
             { _, year, month, dayOfMonth ->
                 calendar.set(Calendar.YEAR, year)
                 calendar.set(Calendar.MONTH, month)
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
                 timePicker()
             },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        ).show()
+            now.get(Calendar.YEAR),
+            now.get(Calendar.MONTH),
+            now.get(Calendar.DAY_OF_MONTH)
+        )
+
+        datePickerDialog.datePicker.minDate = now.timeInMillis
+        datePickerDialog.show()
     }
 
 

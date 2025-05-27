@@ -6,7 +6,7 @@
     <string name="select_date">Select Date</string>
     <string name="event_type">Event type</string>
     <string name="event_description">Event description</string>
-    <string name="event_date">Event date (dd/MM/yyyy)</string>
+    <string name="event_date">Event date (dd/mm/yyyy hh:mm)</string>
     <string name="create_event">Create Event</string>
     <string name="guest">Guest</string>
     <string name="login">Login</string>
