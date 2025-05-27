@@ -7,6 +7,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.firebase.ui.database.FirebaseListAdapter
 import com.firebase.ui.database.FirebaseListOptions
+import com.google.firebase.database.DatabaseReference
 import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
 import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
@@ -111,5 +112,14 @@ class EventAdapter(
                 dataViewModel.unFavoriteEvent(it)
             }
         }
+    }
+
+
+    override fun getItem(position: Int): Event {
+        return super.getItem(count - position - 1)
+    }
+
+    override fun getRef(position: Int): DatabaseReference {
+        return super.getRef(count - position - 1)
     }
 }
