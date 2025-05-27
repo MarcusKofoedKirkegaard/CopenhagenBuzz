@@ -2,9 +2,12 @@ package dk.itu.moapd.copenhagenbuzz.parkmkki.adapters
 
 import android.content.Context
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.firebase.ui.database.FirebaseListAdapter
 import com.firebase.ui.database.FirebaseListOptions
@@ -12,6 +15,7 @@ import com.google.firebase.database.DatabaseReference
 import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
 import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
+import dk.itu.moapd.copenhagenbuzz.parkmkki.views.dialogs.EventDetailDialog
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -23,6 +27,7 @@ import java.util.Locale
  * @constructor Accepts FirebaseListOptions for managing event data.
  */
 class EventAdapter(
+    private val fragmentManager: FragmentManager,
     private val dataViewModel: DataViewModel,
     options: FirebaseListOptions<Event>
 ) : FirebaseListAdapter<Event>(options) {
@@ -37,6 +42,7 @@ class EventAdapter(
         val unFavoriteButton: View = view.findViewById(R.id.unfavorite_button)
         val image: ImageView = view.findViewById(R.id.event_image)
         val alarmButton: View = view.findViewById(R.id.alarm_button)
+        val infoButton: Button = view.findViewById(R.id.info_button)
         var countdownTimer: CountDownTimer? = null
 
         fun clearTimer() {
@@ -137,6 +143,10 @@ class EventAdapter(
             }
         }
 
+        infoButton.setOnClickListener {
+            EventDetailDialog.newInstance(event)
+                .show(fragmentManager, "event_detail")
+        }
     }
 
     override fun getItem(position: Int): Event {

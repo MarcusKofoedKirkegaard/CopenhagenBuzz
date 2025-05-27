@@ -6,6 +6,9 @@
  */
 package dk.itu.moapd.copenhagenbuzz.parkmkki.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 /**
  * Event data class
  *
@@ -17,6 +20,7 @@ package dk.itu.moapd.copenhagenbuzz.parkmkki.models
  *
  *@see "https://kotlinlang.org/docs/data-classes.html#properties-declared-in-the-class-body"
  */
+@Parcelize
 data class Event(
     val eventCreator: String ="",
     val eventName: String ="",
@@ -26,7 +30,7 @@ data class Event(
     val eventDescription: String="",
     var eventImagePath: String="",
     var eventThumbsUp: Int=0
-) {
+) : Parcelable {
 
 
     /**

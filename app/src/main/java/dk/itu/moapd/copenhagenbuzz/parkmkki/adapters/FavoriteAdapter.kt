@@ -1,5 +1,6 @@
 package dk.itu.moapd.copenhagenbuzz.parkmkki.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.FavoriteRowItemBinding
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
 import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
+import dk.itu.moapd.copenhagenbuzz.parkmkki.views.dialogs.EventDetailDialog
 
 /**
  * Adapter for the favorites list using FirebaseRecyclerAdapter and RecyclerView.
@@ -23,10 +25,26 @@ class FavoriteAdapter(private val dataViewModel: DataViewModel, options: Firebas
     class ViewHolder(private val binding: FavoriteRowItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        private var currentEvent: Event? = null
+
+        init {
+            binding.showMoreButton.setOnClickListener {
+                currentEvent?.let { event ->
+
+                    val context = binding.root.context
+                    EventDetailDialog.newInstance(event).show(
+                        (context as androidx.fragment.app.FragmentActivity).supportFragmentManager,
+                        "event_detail"
+                    )
+                }
+            }
+        }
+
         /**
          * Binds an [Event] to the view using ViewBinding.
          */
         fun bind(event: Event, eventKey: String?, dataViewModel: DataViewModel ) {
+            currentEvent = event
             with(binding) {
                 textFieldFavoriteName.text = event.eventName
                 textFieldFavoriteType.text = event.eventType
