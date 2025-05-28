@@ -27,6 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.EventEditBinding
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.EventLocation
@@ -64,6 +65,9 @@ class EventEditDialog : DialogFragment() {
         super.onCreate(savedInstanceState)
         eventKey = requireArguments().getString("eventKey")!!
         event = requireArguments().getParcelable("event")!!
+
+        if(event.eventCreator != FirebaseAuth.getInstance().currentUser?.uid.toString())
+            this.dismiss()
     }
 
     override fun onCreateView(
@@ -88,6 +92,9 @@ class EventEditDialog : DialogFragment() {
                 showDateTimePicker()
             }
         }
+
+        binding.fabDeleteEvent.visibility = View.VISIBLE
+        binding.fabConfirmDeleteEvent.visibility = View.GONE
     }
 
     override fun onDestroyView() {
@@ -100,6 +107,16 @@ class EventEditDialog : DialogFragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 onEditEvent()
             }
+        }
+
+        binding.fabDeleteEvent.setOnClickListener {
+            binding.fabDeleteEvent.visibility = View.GONE
+            binding.fabConfirmDeleteEvent.visibility = View.VISIBLE
+        }
+
+        binding.fabConfirmDeleteEvent.setOnClickListener {
+            viewModel.deleteEvent(eventKey)
+            this.dismiss()
         }
 
         binding.buttonTakePicture.setOnClickListener {
@@ -173,6 +190,7 @@ class EventEditDialog : DialogFragment() {
             REQUEST_IMAGE_PICK -> {
                 val imageUri: Uri? = data.data
                 if (imageUri != null) {
+                    // Check for sdk version, as getBitMap is deprecated
                     val bitmap = if (Build.VERSION.SDK_INT < 28) {
                         MediaStore.Images.Media.getBitmap(requireContext().contentResolver, imageUri)
                     } else {

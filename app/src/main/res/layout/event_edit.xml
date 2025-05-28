@@ -171,5 +171,37 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:fabCustomSize="@dimen/add_event_button_size"/>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_delete_event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/add_event_button_margin"
+        android:contentDescription="@string/confirm_edit_event"
+        android:elevation="@dimen/add_event_button_elevation"
+        android:translationZ="@dimen/add_event_button_elevation"
+        app:backgroundTint="@color/lightGrey"
+        app:fabCustomSize="@dimen/add_event_button_size"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fab_edit_event"
+        app:srcCompat="@drawable/baseline_delete_24"
+        app:tint="@color/black" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_confirm_delete_event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/add_event_button_margin"
+        android:contentDescription="@string/confirm_edit_event"
+        android:elevation="@dimen/add_event_button_elevation"
+        android:translationZ="@dimen/add_event_button_elevation"
+        app:backgroundTint="@color/red"
+        app:fabCustomSize="@dimen/add_event_button_size"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fab_edit_event"
+        app:srcCompat="@drawable/baseline_delete_24"
+        app:tint="@color/black" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

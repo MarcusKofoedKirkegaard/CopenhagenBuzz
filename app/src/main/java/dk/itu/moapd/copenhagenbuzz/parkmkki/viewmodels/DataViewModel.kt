@@ -96,6 +96,17 @@ class DataViewModel : ViewModel() {
         }
     }
 
+    fun deleteEvent(eventKey: String) {
+        viewModelScope.launch {
+            try {
+                val key = eventKey
+                database.child("events").child(key).removeValue().await()
+            } catch (e: Exception) {
+                _errorMessage.postValue("Failed to delete event: ${e.message}")
+            }
+        }
+    }
+
     private suspend fun uploadImage(key: String, data: ByteArray): String {
         val imageName = "${System.currentTimeMillis()}.jpg"
         val ref = storage.child(key).child(imageName)
