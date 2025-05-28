@@ -93,6 +93,19 @@ class DataViewModel : ViewModel() {
         }
     }
 
+    fun editEvent(eventKey: String, updatedEvent: Event, imageByteArray: ByteArray) {
+        viewModelScope.launch {
+            try {
+                val key = eventKey
+                val imageUrl = uploadImage(key, imageByteArray)
+                updatedEvent.eventImagePath = imageUrl
+                database.child("events").child(key).setValue(updatedEvent).await()
+            } catch (e: Exception) {
+                _errorMessage.postValue("Failed to edit event: ${e.message}")
+            }
+        }
+    }
+
     private suspend fun uploadImage(key: String, data: ByteArray): String {
         val imageName = "${System.currentTimeMillis()}.jpg"
         val ref = storage.child(key).child(imageName)

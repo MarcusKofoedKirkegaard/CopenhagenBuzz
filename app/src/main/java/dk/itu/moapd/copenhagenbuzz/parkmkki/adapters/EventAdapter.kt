@@ -11,11 +11,14 @@ import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.firebase.ui.database.FirebaseListAdapter
 import com.firebase.ui.database.FirebaseListOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
 import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
 import dk.itu.moapd.copenhagenbuzz.parkmkki.views.dialogs.EventDetailDialog
+import dk.itu.moapd.copenhagenbuzz.parkmkki.views.dialogs.EventEditDialog
+import dk.itu.moapd.copenhagenbuzz.parkmkki.views.fragments.AddEventFragment
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -43,6 +46,7 @@ class EventAdapter(
         val image: ImageView = view.findViewById(R.id.event_image)
         val alarmButton: View = view.findViewById(R.id.alarm_button)
         val infoButton: Button = view.findViewById(R.id.info_button)
+        val editButton: Button = view.findViewById(R.id.edit_button)
         var countdownTimer: CountDownTimer? = null
 
         fun clearTimer() {
@@ -123,6 +127,7 @@ class EventAdapter(
             bind(event, eventKey)
         }
 
+        if(event.eventCreator != FirebaseAuth.getInstance().currentUser?.uid.toString()) editButton.visibility = View.GONE
 
         favoriteButton.visibility = if (isFavorited) View.GONE else View.VISIBLE
         unFavoriteButton.visibility = if (isFavorited) View.VISIBLE else View.GONE
@@ -137,6 +142,11 @@ class EventAdapter(
             eventKey.let {
                 dataViewModel.unFavoriteEvent(it)
             }
+        }
+
+        editButton.setOnClickListener {
+            EventEditDialog.newInstance(eventKey, event)
+                .show(fragmentManager, "event_edit")
         }
 
         infoButton.setOnClickListener {
