@@ -48,10 +48,12 @@ class EventDetailDialog : DialogFragment() {
         val info = view.findViewById<Button>(R.id.info_button)
         val favorite = view.findViewById<ImageButton>(R.id.favorite_button)
         val unfavorite = view.findViewById<ImageButton>(R.id.unfavorite_button)
+        val edit = view.findViewById<Button>(R.id.edit_button)
         alarm.visibility = View.GONE
         info.visibility = View.GONE
         favorite.visibility = View.GONE
         unfavorite.visibility = View.GONE
+        edit.visibility = View.GONE
 
         name.text = event.eventName
         type.text = event.eventType
