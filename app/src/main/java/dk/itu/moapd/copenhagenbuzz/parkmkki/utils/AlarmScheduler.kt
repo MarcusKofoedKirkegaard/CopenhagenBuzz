@@ -18,7 +18,6 @@ object AlarmScheduler {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!alarmManager.canScheduleExactAlarms()) {
-                // Prompt user to allow "Schedule exact alarms" in system settings
                 val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
                 intent.data = Uri.parse("package:${context.packageName}")
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

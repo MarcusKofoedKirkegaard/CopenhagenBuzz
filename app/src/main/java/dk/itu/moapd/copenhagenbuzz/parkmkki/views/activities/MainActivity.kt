@@ -52,23 +52,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Inflate the view using ViewBinding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize Navigation Component
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // Set up the top app bar with navigation controller
         setSupportActionBar(binding.topAppBar)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        // Link bottom navigation with the navigation controller
         NavigationUI.setupWithNavController(binding.bottomNavigation, navController)
 
-        // LOOK THIS UP!
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id in listOf(R.id.nav_timeline, R.id.nav_maps, R.id.nav_add_event, R.id.nav_favorites)) {
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)

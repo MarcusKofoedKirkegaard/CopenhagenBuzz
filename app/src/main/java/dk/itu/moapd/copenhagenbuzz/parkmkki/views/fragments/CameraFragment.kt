@@ -35,36 +35,26 @@ import java.util.Locale
  */
 class CameraFragment : Fragment() {
 
-    private var _binding: FragmentCameraBinding? = null // Binding reference for the fragment view.
+    private var _binding: FragmentCameraBinding? = null
 
-    // Property to get the binding, throws exception if it's null.
     private val binding
         get() = requireNotNull(_binding) {
             "Cannot access binding because it is null. Is the view visible?"
         }
 
-    // ViewModel to handle camera selector state.
     private val viewModel: CameraViewModel by activityViewModels()
-
-    // Variable to hold the camera selector (default to back camera).
     private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-    // Variable to handle image capture functionality.
     private var imageCapture: ImageCapture? = null
-
-    // Variable to store the URI of the captured image.
     private var imageUri: Uri? = null
 
-    // Format for naming the captured photo files.
     companion object {
         private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
     }
 
-    // Launcher to request camera permission at runtime.
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { result ->
-        cameraPermissionResult(result) // Handle the result of the camera permission request.
+        cameraPermissionResult(result)
     }
 
     /**
@@ -75,7 +65,7 @@ class CameraFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = FragmentCameraBinding.inflate(inflater, container, false).also {
-        _binding = it // Assign the binding for accessing UI elements.
+        _binding = it
     }.root
 
     /**
@@ -85,49 +75,31 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Request camera permissions on fragment startup.
         if (checkPermission()) {
-            startCamera() // Start camera if permission granted.
+            startCamera()
         } else {
-            requestPermissionLauncher.launch(Manifest.permission.CAMERA) // Request permission.
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
 
-        // Observe camera selector changes from the ViewModel.
         viewModel.selector.observe(viewLifecycleOwner) {
-            cameraSelector = it ?: CameraSelector.DEFAULT_BACK_CAMERA // Update camera selector.
+            cameraSelector = it ?: CameraSelector.DEFAULT_BACK_CAMERA
         }
 
-        // Set up UI listeners for the camera controls.
         binding.apply {
-
-            // Listener for the photo capture button.
             buttonImageCapture.setOnClickListener {
-                takePhoto() // Capture photo when clicked.
+                takePhoto()
             }
 
-            // Listener for the camera switch button.
             buttonCameraSwitch.apply {
-                isEnabled = false // Disable until camera setup is complete.
-
+                isEnabled = false
                 setOnClickListener {
-                    // Switch between front and back cameras.
                     viewModel.onCameraSelectorChanged(
                         if (cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA)
                             CameraSelector.DEFAULT_BACK_CAMERA
                         else
                             CameraSelector.DEFAULT_FRONT_CAMERA
                     )
-
-                    // Restart the camera setup to apply the camera switch.
                     startCamera()
-                }
-            }
-
-            // Listener for viewing the captured image.
-            buttonImageViewer.setOnClickListener {
-                imageUri?.let { uri ->
-                    val bundle =
-                        bundleOf("ARG_IMAGE" to uri.toString()) // Pass URI in a bundle for viewing.
                 }
             }
         }
@@ -139,7 +111,7 @@ class CameraFragment : Fragment() {
      */
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null // Set the binding to null to release resources.
+        _binding = null
     }
 
     /**
@@ -150,7 +122,6 @@ class CameraFragment : Fragment() {
      * @param isGranted Whether the permission was granted or denied.
      */
     private fun cameraPermissionResult(isGranted: Boolean) {
-        // Start the camera if permission is granted, otherwise close the activity.
         isGranted.takeIf { it }?.run {
             startCamera()
         } ?: requireActivity().finish()
@@ -174,10 +145,9 @@ class CameraFragment : Fragment() {
      */
     private fun updateCameraSwitchButton(provider: ProcessCameraProvider) {
         binding.buttonCameraSwitch.isEnabled = try {
-            // Enable the camera switch button if both front and back cameras are available.
             hasBackCamera(provider) && hasFrontCamera(provider)
         } catch (exception: CameraInfoUnavailableException) {
-            false // Disable button if camera info is unavailable.
+            false
         }
     }
 
@@ -203,33 +173,27 @@ class CameraFragment : Fragment() {
      * Starts the camera and binds the use cases (preview and image capture) to the lifecycle.
      */
     private fun startCamera() {
-
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         cameraProviderFuture.addListener({
-
             val cameraProvider = cameraProviderFuture.get()
 
-            // Build the preview use case.
             val preview = Preview.Builder().build().also {
                 it.setSurfaceProvider(binding.viewFinder.surfaceProvider) // Set surface provider for the preview.
             }
 
-            // Build the image capture use case.
             imageCapture = ImageCapture.Builder().build()
 
             try {
-                cameraProvider.unbindAll() // Unbind any existing use cases.
+                cameraProvider.unbindAll()
 
-                // Bind the preview and image capture use cases to the lifecycle.
                 cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture)
 
-                // Update the camera switch button state.
                 updateCameraSwitchButton(cameraProvider)
 
             } catch(ex: Exception) {
-                showSnackBar("Use case binding failed: $ex") // Show an error if binding fails.
+                showSnackBar("Use case binding failed: $ex")
             }
 
         }, ContextCompat.getMainExecutor(requireContext()))
@@ -239,13 +203,11 @@ class CameraFragment : Fragment() {
      * Captures a photo and saves it to the device's storage.
      */
     private fun takePhoto() {
+        val imageCapture = imageCapture ?: return
 
-        val imageCapture = imageCapture ?: return // Return if image capture is not initialized.
+        val timestamp = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(Date())
+        val filename = "IMG_$timestamp.jpg"
 
-        val timestamp = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(Date()) // Generate timestamp.
-        val filename = "IMG_$timestamp.jpg" // Create a filename for the photo.
-
-        // Prepare content values for storing the image in the MediaStore.
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
@@ -254,29 +216,24 @@ class CameraFragment : Fragment() {
             put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
         }
 
-        // Create output file options for the captured image.
         val outputFileOptions = ImageCapture.OutputFileOptions.Builder(
             requireActivity().contentResolver,
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             contentValues
-        )
-            .build()
+        ).build()
 
-        // Capture the image and save it to the device.
         imageCapture.takePicture(
             outputFileOptions,
             ContextCompat.getMainExecutor(requireContext()),
             object : ImageCapture.OnImageSavedCallback {
 
-                // Called when the photo is successfully saved.
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    imageUri = output.savedUri // Store the URI of the saved image.
-                    showSnackBar("Photo capture succeeded: $filename.jpg") // Notify the user.
+                    imageUri = output.savedUri
+                    showSnackBar("Photo capture succeeded: $filename.jpg")
                 }
 
-                // Called when an error occurs during image capture.
                 override fun onError(exception: ImageCaptureException) {
-                    showSnackBar("Photo capture failed: ${exception.message}") // Notify the user of the error.
+                    showSnackBar("Photo capture failed: ${exception.message}")
                 }
             }
         )
@@ -290,6 +247,6 @@ class CameraFragment : Fragment() {
     private fun showSnackBar(message: String) {
         Snackbar.make(
             binding.root, message, Snackbar.LENGTH_SHORT
-        ).show() // Show the Snackbar with the message.
+        ).show()
     }
 }

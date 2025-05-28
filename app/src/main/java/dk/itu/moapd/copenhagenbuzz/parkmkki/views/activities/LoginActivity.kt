@@ -36,7 +36,6 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Set up login button click listener
         binding.fabLogin.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java).apply {
                 putExtra("isLoggedIn", true)
@@ -45,7 +44,6 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
 
-        // Set up guest login button click listener
         binding.fabGuest.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java).apply {
                 putExtra("isLoggedIn", false)

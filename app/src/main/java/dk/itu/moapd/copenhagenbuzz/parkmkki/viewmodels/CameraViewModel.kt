@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 
 class CameraViewModel : ViewModel() {
 
-
     private var _selector = MutableLiveData<CameraSelector>()
 
     val selector: LiveData<CameraSelector>
@@ -16,5 +15,4 @@ class CameraViewModel : ViewModel() {
     fun onCameraSelectorChanged(selector: CameraSelector) {
         this._selector.value = selector
     }
-
 }

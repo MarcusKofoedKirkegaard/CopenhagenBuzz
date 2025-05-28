@@ -32,7 +32,6 @@ data class Event(
     var eventThumbsUp: Int=0
 ) : Parcelable {
 
-
     /**
      * Prints the Event information
      *

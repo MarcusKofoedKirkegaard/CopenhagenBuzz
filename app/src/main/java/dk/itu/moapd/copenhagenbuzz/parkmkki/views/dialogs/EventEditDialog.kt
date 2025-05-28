@@ -3,6 +3,8 @@ package dk.itu.moapd.copenhagenbuzz.parkmkki.views.dialogs
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,21 +19,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.transition.Visibility
-import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
-import dk.itu.moapd.copenhagenbuzz.parkmkki.R
 import dk.itu.moapd.copenhagenbuzz.parkmkki.databinding.EventEditBinding
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
 import dk.itu.moapd.copenhagenbuzz.parkmkki.models.EventLocation
@@ -40,6 +35,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -79,9 +75,19 @@ class EventEditDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         setupClickListeners()
         updateTextFields()
+
+        binding.editTextEventDate.apply {
+            isFocusable = false
+            isClickable = true
+            setOnClickListener {
+                Log.i("binding", "trying")
+                showDateTimePicker()
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -167,7 +173,6 @@ class EventEditDialog : DialogFragment() {
             REQUEST_IMAGE_PICK -> {
                 val imageUri: Uri? = data.data
                 if (imageUri != null) {
-                    // Check for sdk version, as getBitMap is deprecated
                     val bitmap = if (Build.VERSION.SDK_INT < 28) {
                         MediaStore.Images.Media.getBitmap(requireContext().contentResolver, imageUri)
                     } else {
@@ -216,7 +221,16 @@ class EventEditDialog : DialogFragment() {
         val user = viewModel.getCurrentUser() ?: return null
         val name = binding.editTextEventName.text.toString()
         val type = binding.editTextEventType.text.toString()
-        val date = binding.editTextEventDate.text.toString()
+        val dateStr = binding.editTextEventDate.text.toString()
+        val date = try {
+            SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).parse(dateStr)?.time
+        } catch (e: Exception) {
+            null
+        }
+        if (date == null) {
+            showToast("Invalid date format.")
+            return null
+        }
         val description = binding.editTextEventDescription.text.toString()
         val location = getEventLocation()
         return Event(user.uid, name, location, date.toLong(), type, description, imagePath, )
@@ -260,7 +274,9 @@ class EventEditDialog : DialogFragment() {
         binding.editTextEventName.text?.insert(0, event.eventName)
         binding.editTextEventType.text?.insert(0, event.eventType)
         binding.editTextEventLocation.text?.insert(0, event.eventLocation.address)
-        binding.editTextEventDate.text?.insert(0, event.eventDate.toString())
+        val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        val formattedDate = sdf.format(Date(event.eventDate))
+        binding.editTextEventDate.setText(formattedDate)
         binding.imagePreview.setImageBitmap(null)
         binding.imagePreview.visibility = View.GONE
         binding.editTextEventDescription.text?.insert(0, event.eventDescription)
@@ -278,5 +294,51 @@ class EventEditDialog : DialogFragment() {
             }
             return EventEditDialog().apply { arguments = args }
         }
+    }
+
+    private fun showDateTimePicker() {
+        Log.i("Picker", "I am trying to show datetime picker")
+        val now = Calendar.getInstance()
+        val calendar = Calendar.getInstance()
+
+        val timePicker = {
+            TimePickerDialog(
+                requireContext(),
+                { _, hour, minute ->
+                    calendar.set(Calendar.HOUR_OF_DAY, hour)
+                    calendar.set(Calendar.MINUTE, minute)
+                    calendar.set(Calendar.SECOND, 0)
+                    calendar.set(Calendar.MILLISECOND, 0)
+
+                    if (calendar.timeInMillis < now.timeInMillis) {
+                        showToast("Please select a future time")
+                        return@TimePickerDialog
+                    }
+
+                    val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                    val formatted = sdf.format(calendar.time)
+                    binding.editTextEventDate.setText(formatted)
+                },
+                now.get(Calendar.HOUR_OF_DAY),
+                now.get(Calendar.MINUTE),
+                true
+            ).show()
+        }
+
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                calendar.set(Calendar.YEAR, year)
+                calendar.set(Calendar.MONTH, month)
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                timePicker()
+            },
+            now.get(Calendar.YEAR),
+            now.get(Calendar.MONTH),
+            now.get(Calendar.DAY_OF_MONTH)
+        )
+
+        datePickerDialog.datePicker.minDate = now.timeInMillis
+        datePickerDialog.show()
     }
 }

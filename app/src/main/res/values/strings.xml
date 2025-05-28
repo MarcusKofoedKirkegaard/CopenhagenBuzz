@@ -33,4 +33,6 @@
     <string name="reset_drawing">Reset Drawing</string>
     <string name="preview_of_image_to_add">Preview of image to add</string>
     <string name="set_alarm">Set alarm</string>
+    <string name="event_started_label">Event Started</string>
+    <string name="set_alarm_label">Set Alarm</string>
 </resources>

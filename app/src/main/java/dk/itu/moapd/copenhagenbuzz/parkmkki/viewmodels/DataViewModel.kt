@@ -22,23 +22,15 @@ class DataViewModel : ViewModel() {
         filename = "env"
     }["DATABASE_URL"]
 
-
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-    val database: DatabaseReference = FirebaseDatabase.getInstance(DATABASE_URL).reference
     private val storage = FirebaseStorage.getInstance().reference.child("event_images")
-
     private val _events = MutableLiveData<List<Event>>()
-    val events: LiveData<List<Event>> get() = _events
-
     private val _favoritedEventKeys = MutableLiveData<Set<String>>(setOf())
-    val favoritedEventKeys: LiveData<Set<String>> = _favoritedEventKeys
-
     private val _errorMessage = MutableLiveData<String?>()
-    val errorMessage: LiveData<String?> get() = _errorMessage
 
-    fun getCurrentUser() = auth.currentUser
-
-
+    val database: DatabaseReference = FirebaseDatabase.getInstance(DATABASE_URL).reference
+    val events: LiveData<List<Event>> get() = _events
+    val favoritedEventKeys: LiveData<Set<String>> = _favoritedEventKeys
 
     private val eventListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
@@ -64,20 +56,18 @@ class DataViewModel : ViewModel() {
         }
     }
 
-    suspend fun refreshFavoritedEvents() {
+    override fun onCleared() {
+        super.onCleared()
+        database.child("events").removeEventListener(eventListener)
+    }
+
+    fun getCurrentUser() = auth.currentUser
+
+    private suspend fun refreshFavoritedEvents() {
         val userId = getCurrentUser()?.uid ?: return
         val snapshot = database.child("favorites").child(userId).get().await()
         val keys = snapshot.children.mapNotNull { it.key }.toSet()
         _favoritedEventKeys.postValue(keys)
-    }
-
-    fun isEventFavoritedLocally(eventKey: String): Boolean {
-        return favoritedEventKeys.value?.contains(eventKey) ?: false
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        database.child("events").removeEventListener(eventListener)
     }
 
     fun addEvent(event: Event, imageByteArray: ByteArray) {
@@ -111,6 +101,10 @@ class DataViewModel : ViewModel() {
         val ref = storage.child(key).child(imageName)
         ref.putBytes(data).await()
         return ref.downloadUrl.await().toString()
+    }
+
+    fun isEventFavoritedLocally(eventKey: String): Boolean {
+        return favoritedEventKeys.value?.contains(eventKey) ?: false
     }
 
     fun favoriteEvent(eventKey: String) {

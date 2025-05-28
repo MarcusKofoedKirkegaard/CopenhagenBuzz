@@ -13,9 +13,8 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
  */
 class FirebaseLoginActivity : AppCompatActivity() {
 
-    // Registering the result handler for the sign-in activity result using FirebaseAuthUIActivityResultContract.
     private val signInLauncher = registerForActivityResult(FirebaseAuthUIActivityResultContract()) {
-            result -> onSignInResult(result) // Handle the result of the sign-in attempt.
+            result -> onSignInResult(result)
     }
 
     /**
@@ -24,7 +23,7 @@ class FirebaseLoginActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        createSignInIntent() // Start the sign-in process.
+        createSignInIntent()
     }
 
     /**
@@ -32,22 +31,19 @@ class FirebaseLoginActivity : AppCompatActivity() {
      * to the user, allowing them to choose either email or Google login.
      */
     private fun createSignInIntent() {
-        // Define the available authentication providers.
         val providers = arrayListOf(
-            AuthUI.IdpConfig.EmailBuilder().build(),  // Email authentication provider.
-            AuthUI.IdpConfig.GoogleBuilder().build()  // Google authentication provider.
+            AuthUI.IdpConfig.EmailBuilder().build(),
+            AuthUI.IdpConfig.GoogleBuilder().build()
         )
 
-        // Build the sign-in intent with the available providers and some additional configurations.
         val signInIntent = AuthUI.getInstance().createSignInIntentBuilder()
-            .setAvailableProviders(providers) // Set the providers.
-            .setIsSmartLockEnabled(false) // Disable smart lock for saving credentials.
+            .setAvailableProviders(providers)
+            .setIsSmartLockEnabled(false)
             .apply {
-                setTosAndPrivacyPolicyUrls("https://firebase.google.com/terms/", "https://firebase.google.com/policies/") // Set the terms of service and privacy policy URLs.
+                setTosAndPrivacyPolicyUrls("https://firebase.google.com/terms/", "https://firebase.google.com/policies/")
             }
             .build()
 
-        // Launch the sign-in intent using the result launcher.
         signInLauncher.launch(signInIntent)
     }
 
@@ -60,11 +56,8 @@ class FirebaseLoginActivity : AppCompatActivity() {
     private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
         when(result.resultCode) {
             RESULT_OK -> {
-                // If authentication is successful, navigate to the main activity.
                 startMainActivity()
-            } else -> {
-            // Handle authentication failure (e.g., show an error message or retry).
-        }
+            } else -> {}
         }
     }
 
@@ -73,9 +66,8 @@ class FirebaseLoginActivity : AppCompatActivity() {
      */
     private fun startMainActivity() {
         Intent(this, MainActivity::class.java).apply {
-            startActivity(this) // Start the main activity.
-            finish() // Finish the current login activity to prevent the user from returning to it.
+            startActivity(this)
+            finish()
         }
     }
-
 }

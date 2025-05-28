@@ -2,7 +2,6 @@ package dk.itu.moapd.copenhagenbuzz.parkmkki.adapters
 
 import android.content.Context
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -18,7 +17,6 @@ import dk.itu.moapd.copenhagenbuzz.parkmkki.models.Event
 import dk.itu.moapd.copenhagenbuzz.parkmkki.viewmodels.DataViewModel
 import dk.itu.moapd.copenhagenbuzz.parkmkki.views.dialogs.EventDetailDialog
 import dk.itu.moapd.copenhagenbuzz.parkmkki.views.dialogs.EventEditDialog
-import dk.itu.moapd.copenhagenbuzz.parkmkki.views.fragments.AddEventFragment
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -30,6 +28,7 @@ import java.util.Locale
  * @constructor Accepts FirebaseListOptions for managing event data.
  */
 class EventAdapter(
+    private val context: Context?,
     private val fragmentManager: FragmentManager,
     private val dataViewModel: DataViewModel,
     options: FirebaseListOptions<Event>
@@ -100,16 +99,17 @@ class EventAdapter(
                     }
 
                     override fun onFinish() {
-                        (alarmButton as? TextView)?.text = "Event Started"
+                        (alarmButton as? TextView)?.text =
+                            context?.getString(R.string.event_started_label)
                         alarmButton.isEnabled = false
                     }
                 }.start()
             } else {
-                (alarmButton as? TextView)?.text = "Set Alarm"
+                (alarmButton as? TextView)?.text = context?.getString(R.string.set_alarm_label)
                 alarmButton.isEnabled = true
             }
         } else {
-            (alarmButton as? TextView)?.text = "Event Started"
+            (alarmButton as? TextView)?.text = context?.getString(R.string.event_started_label)
             alarmButton.isEnabled = false
         }
 

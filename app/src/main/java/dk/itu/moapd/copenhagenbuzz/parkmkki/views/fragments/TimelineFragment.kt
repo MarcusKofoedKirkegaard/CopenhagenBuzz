@@ -48,7 +48,7 @@ class TimelineFragment : Fragment() {
                 .setLifecycleOwner(viewLifecycleOwner)
                 .build()
 
-            adapter = EventAdapter(childFragmentManager, viewModel, options)
+            adapter = EventAdapter(context, childFragmentManager, viewModel, options)
             listView.adapter = adapter
         }
 
